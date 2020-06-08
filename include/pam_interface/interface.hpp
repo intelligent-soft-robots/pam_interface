@@ -25,6 +25,8 @@ namespace pam_interface {
     
     RobotState<NB_DOFS> get_state();
 
+    virtual void init()=0;
+    
     virtual double encoder_to_angle(int dof, int encoder) =0;
 
     virtual void terminate()=0;

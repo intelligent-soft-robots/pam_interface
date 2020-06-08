@@ -82,7 +82,7 @@ namespace pam_interface {
       if(!NiFpga_IsError(status)) return;
       if(!exception_thrown_){
 	exception_thrown_ = true;
-	std::cout << "\n\nthrow exception " << message << "\n\n";
+	std::cout << "pam_interface::RealRobotInterface exception " << message << std::endl;
 	terminate();
 	throw NiFpga_exception(message,status);
       }
@@ -91,54 +91,62 @@ namespace pam_interface {
     void init()
     {
 
-      initialized_=true;
+      if(initialized_)
+	{
+	  std::cout <<
+	    std::string(std::string("\nwarning: ")+
+			std::string("pam_interface::RealRobotInterface init ")+
+			std::string("function called twice")) << std::endl;
+	  return;
+	}
       
+      initialized_=true;
+
+      // see : pam_interface/nifpga/factory.hpp
+      std::cout << "\ninitializing fpga" << std::endl;
       nifpga_robot_ = four_dofs::get_fpga_robot();
-
       NiFpga_Status status;
-
-      printf("\ninitializing fpga");
       status = NiFpga_Initialize();
       check_status("initializing fpga",status);
+      std::cout << "-- done" << std::endl;
       
-      printf("-- done");
-      printf("opening fpga");
+      std::cout << "opening fpga" << std::endl;
       status = NiFpga_Open(nifpga_robot_->ni_bit_file.c_str(),
 			   nifpga_robot_->signature.c_str(),
 			   nifpga_robot_->ni_resource.c_str(),
 			   nifpga_robot_->attribute,
 			   &(nifpga_robot_->session));
       check_status("opening fpga",status);
+      std::cout << "-- done" << std::endl;
       
-      printf("-- done");
-      printf("calling run function");
+      std::cout << "calling run function" << std::endl;
       status = NiFpga_Run(nifpga_robot_->session,0);
       check_status("calling run function",status);
-      printf("-- done");
+      std::cout << "-- done" << std::endl;
 
       // deactivating air pressure (?)
-      printf("stopping control loops");
+      std::cout << "stopping control loops" << std::endl;
       set_control_loops(1);
-      printf("-- done");
+      std::cout << "-- done" << std::endl;
 
       // setting control period to fpga
-      printf("setting control period");
+      std::cout << "setting control period" << std::endl;
       status = NiFpga_WriteU32(nifpga_robot_->session,
 			       nifpga_robot_->control_period,
 			       configuration_.control_period );
       check_status("setting control period",status);
-      printf("-- done");
+      std::cout << "-- done" << std::endl;
 
       // setting sensor period to fpga
-      printf("setting sensor period");
+      std::cout << "setting sensor period" << std::endl;
       status = NiFpga_WriteU32(nifpga_robot_->session,
 			       nifpga_robot_->sensor_period,
 			       configuration_.sensor_period);
       check_status("setting sensor period",status);
-      printf("-- done");
+      std::cout << "-- done" << std::endl;
 
       // setting min and max pressures to fpga
-      printf("setting minimal and maximal pressures");
+      std::cout << "setting minimal and maximal pressures" << std::endl;
       for(int dof=0;dof<NB_DOFS;dof++){
 	for(Sign sign:signs){
 	  status =
@@ -157,12 +165,12 @@ namespace pam_interface {
 	  check_status("setting minimal pressure",status);
 	}
       }
-      printf("-- done");
+      std::cout  << "-- done" << std::endl;
 
       // activating air pressure (?)
-      printf("starting control loops");
+      std::cout << "starting control loops" << std::endl;
       set_control_loops(0);
-      printf("-- done");
+      std::cout << "-- done" << std::endl;
 
     }
     

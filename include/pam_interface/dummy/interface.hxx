@@ -142,3 +142,6 @@ int DummyInterface<NB_DOFS>::read_control_iteration()
 template<int NB_DOFS>
 void DummyInterface<NB_DOFS>::terminate(){}
 
+template<int NB_DOFS>
+void DummyInterface<NB_DOFS>::init(){}
+

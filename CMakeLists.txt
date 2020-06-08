@@ -61,6 +61,14 @@ target_compile_definitions(demo_dummy PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 
+add_executable(demo_real
+  demos/demo_real.cpp)
+target_link_libraries(demo_real pam_interface)
+target_compile_definitions(demo_real PRIVATE
+  PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
+  BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
+
+
 ###################
 # Python bindings #
 ###################

@@ -11,6 +11,10 @@ namespace pam_interface
 {
 
   // NB_DOFS*2 for some template types because 1 dof for 2 muscles
+
+  // concrete instances will be
+  // pam_interface/real/driver.hpp
+  // pam_interface/dummy/driver.hpp
   
   template<int NB_DOFS>
   class Driver :

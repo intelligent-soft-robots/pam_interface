@@ -22,6 +22,7 @@ namespace pam_interface {
 		   
     ~DummyInterface();
 
+    void init();
     void terminate();
 
     Microseconds time_diff(int delta_sensor_iteration) ;

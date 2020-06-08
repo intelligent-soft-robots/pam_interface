@@ -23,6 +23,8 @@ template<int NB_DOFS>
 void
 RealRobotDriver<NB_DOFS>::initialize()
 {
+  // see pam_interface/real/factory.hpp
   this->hw_interface_ =
     four_dofs::get_interface<NB_DOFS>(this->config_);
+  this->hw_interface_->init();
 }

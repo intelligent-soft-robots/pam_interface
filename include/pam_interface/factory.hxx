@@ -13,19 +13,12 @@ APtr Factory<NB_DOFS>::create_robot(std::map<int,APtr> &robots,
 				    const Configuration<NB_DOFS>& config)
 {
 
-  double max_action_duration_s =
-    std::numeric_limits<double>::infinity();
-  double max_inter_action_duration_s =
-    std::numeric_limits<double>::infinity();
-  
   // A in an instance if robot_interfaces::Robot<Action,Observation,Driver>
   // with Action = pam_interface::PressureAction
   //      Observation = pam_interface::RobotState
   //      Driver = pam_interface::DummyDriver or pam_interface::RealDriver
   APtr robot_ptr =
-    std::make_shared<A>(max_action_duration_s,
-			max_inter_action_duration_s,
-			config);
+    std::make_shared<A>(config);
   robot_ptr->initialize();
   
   robots.insert(std::make_pair(id, robot_ptr));
