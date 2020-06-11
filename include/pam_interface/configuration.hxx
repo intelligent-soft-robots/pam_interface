@@ -9,19 +9,19 @@ Configuration<NB_DOFS>::~Configuration(){}
 
 template< int NB_DOFS>
 void Configuration<NB_DOFS>::print() const {
-  std::cout << "degrees of freedom: " << NB_DOFS << "\n";
-  std::cout << "control period: " << control_period << "\n";
-  std::cout << "sensor period: " << sensor_period << "\n";
-  std::cout << "server frequency: " << server_frequency << "\n";
-  std::cout << "minimum and maximum pressures for agonists(PLUS): \n";
+  std::cout << "\tdegrees of freedom: " << NB_DOFS << "\n";
+  std::cout << "\tcontrol period: " << control_period << "\n";
+  std::cout << "\tsensor period: " << sensor_period << "\n";
+  std::cout << "\tserver frequency: " << server_frequency << "\n";
+  std::cout << "\tminimum and maximum pressures for agonists(PLUS): \n";
   for(int i_dof=0;i_dof<NB_DOFS;i_dof++){
-    std::cout << "\t"
+    std::cout << "\t\t"
 	      << min_pressures_ago[i_dof]
 	      << "\t" << max_pressures_ago[i_dof] << "\n";
   }
-  std::cout << "minimum and maximum pressures for antagonists(MINUS): \n";
+  std::cout << "\tminimum and maximum pressures for antagonists(MINUS): \n";
   for(int i_dof=0;i_dof<NB_DOFS;i_dof++){
-    std::cout << "\t"
+    std::cout << "\t\t"
 	      << min_pressures_antago[i_dof] << "\t"
 	      << max_pressures_antago[i_dof] << "\n";
   }

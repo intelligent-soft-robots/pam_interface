@@ -51,7 +51,7 @@ PYBIND11_MODULE(pam_interface,m)
 
   pybind11::class_<Configuration>(m,"Configuration")
     .def(pybind11::init<>())
-    .def("print",&Configuration::print)
+    .def("display",&Configuration::print)
     .def_readwrite("control_period",&Configuration::control_period)
     .def_readwrite("sensor_period",&Configuration::sensor_period)
     .def_readwrite("max_pressures_ago",&Configuration::max_pressures_ago)
@@ -60,10 +60,12 @@ PYBIND11_MODULE(pam_interface,m)
     .def_readwrite("min_pressures_antago",&Configuration::min_pressures_antago);
 
   pybind11::class_<JsonConfiguration,Configuration>(m,"JsonConfiguration")
-    .def(pybind11::init<const std::string&>());
+    .def(pybind11::init<const std::string&>())
+    .def("display",&JsonConfiguration::print);
   
   pybind11::class_<DefaultConfiguration,JsonConfiguration>(m,"DefaultConfiguration")
-    .def(pybind11::init<>());
+    .def(pybind11::init<>())
+    .def("display",&DefaultConfiguration::print);
   
   pybind11::class_<RobotState>(m,"RobotState")
     .def(pybind11::init<>())
