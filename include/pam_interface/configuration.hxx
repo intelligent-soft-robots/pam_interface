@@ -13,13 +13,13 @@ void Configuration<NB_DOFS>::print() const {
   std::cout << "\tcontrol period: " << control_period << "\n";
   std::cout << "\tsensor period: " << sensor_period << "\n";
   std::cout << "\tserver frequency: " << server_frequency << "\n";
-  std::cout << "\tminimum and maximum pressures for agonists(PLUS): \n";
+  std::cout << "\tminimum and maximum pressures for agonists: \n";
   for(int i_dof=0;i_dof<NB_DOFS;i_dof++){
     std::cout << "\t\t"
 	      << min_pressures_ago[i_dof]
 	      << "\t" << max_pressures_ago[i_dof] << "\n";
   }
-  std::cout << "\tminimum and maximum pressures for antagonists(MINUS): \n";
+  std::cout << "\tminimum and maximum pressures for antagonists: \n";
   for(int i_dof=0;i_dof<NB_DOFS;i_dof++){
     std::cout << "\t\t"
 	      << min_pressures_antago[i_dof] << "\t"
