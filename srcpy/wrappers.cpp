@@ -34,7 +34,7 @@ PYBIND11_MODULE(pam_interface,m)
     .def(pybind11::init<const std::string&>())
     .def("display",&JsonConfig::print);
   
-  pybind11::class_<DefaultConfig,JsonConfig>(m,"DefaultConfig")
+  pybind11::class_<DefaultConfig,JsonConfig>(m,"DefaultConfiguration")
     .def(pybind11::init<>())
     .def("display",&DefaultConfig::print);
   
