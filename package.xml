@@ -8,11 +8,11 @@
   <license>TODO</license>
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>robot_interfaces</build_depend>
+  <build_depend>o80</build_depend>
   <build_depend>json_helper</build_depend>
   <build_depend>shared_memory</build_depend>
 
-  <run_depend>robot_interfaces</run_depend>
+  <run_depend>o80</run_depend>
   <run_depend>json_helper</run_depend>
   <run_depend>shared_memory</run_depend>
 

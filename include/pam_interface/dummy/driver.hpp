@@ -15,8 +15,6 @@ namespace pam_interface
   public:
 
     DummyRobotDriver(const Configuration<NB_DOFS>& config);
-    void initialize();
-    std::string get_error();
 
   };
 

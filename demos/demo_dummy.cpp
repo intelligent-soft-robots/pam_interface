@@ -1,4 +1,4 @@
-#include "pam_interface/factory.hpp"
+#include "pam_interface/dummy/driver.hpp"
 #include "pam_interface/sign.hpp"
 
 void run()
@@ -9,14 +9,8 @@ void run()
   // configuration for this robot instance
   pam_interface::DefaultConfiguration<4> configuration;
   
-  // robot_ptr is an instance of a pointer to robot interface frontend,
-  // see: https://github.com/open-dynamic-robot-initiative/robot_interfaces/
-  //            blob/master/include/robot_interfaces/robot_frontend.hpp
-
-  auto robot_ptr = pam_interface::Factory<4>::create_dummy(robot_id,
-							   configuration);
-  usleep(2000);
-
+  pam_interface::DummyRobotDriver<4> robot(configuration);
+  
   // PressureAction is of size 2*dofs, because 2 muscles per dof
   pam_interface::PressureAction<8> action;
 
@@ -34,10 +28,10 @@ void run()
 	}
 
       // applying the action
-      robot_interfaces::TimeIndex index = robot_ptr->append_desired_action(action);
+      robot.set(action);
 
       // getting the corresponding observation
-      pam_interface::RobotState<4> observation = robot_ptr->get_observation(index+1);
+      pam_interface::RobotState<4> observation = robot.get();
 
       // checking the desired pressures have been changed as expected
       observation.print();
@@ -45,7 +39,6 @@ void run()
       usleep(50000);
       
     }
-  
 
 }
 

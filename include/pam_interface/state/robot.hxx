@@ -193,15 +193,13 @@ void RobotState<NB_DOFS>::print() const
   for(int i=0;i<NB_DOFS;i++)
     {
       int current_ago = get(i,Sign::AGONIST);
-      int current_antago = get(i,Sign::AGONIST);
+      int current_antago = get(i,Sign::ANTAGONIST);
       int desired_ago = get_desired(i,Sign::AGONIST);
       int desired_antago = get_desired(i,Sign::ANTAGONIST);
       std::cout << "dof: " << i << std::endl;
-      std::cout << "\tcurrent | desired agonist pressure: "
-		<< current_ago << "\t|\t"
-		<< desired_ago << std::endl;
-      std::cout << "\tcurrent | desired antagonist pressure: "
-		<< current_ago << "\t|\t"
-		<< desired_antago << std::endl;
+      std::cout << "\tcurrent agonist: " <<  current_ago
+		<< " | desired agonist: " << desired_ago << std::endl;
+      std::cout << "\tcurrent antagonist: " <<  current_antago
+		<< " | desired antagonist: " << desired_antago << std::endl;
     }
 }

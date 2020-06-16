@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 find_package(catkin REQUIRED COMPONENTS
   shared_memory
-  robot_interfaces
+  o80
   json_helper
 )
 
@@ -15,7 +15,7 @@ DEFINE_OS()
 catkin_package(
  LIBRARIES pam_interface
  INCLUDE_DIRS include
- CATKIN_DEPENDS robot_interfaces json_helper shared_memory
+ CATKIN_DEPENDS o80 json_helper shared_memory
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})

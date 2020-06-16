@@ -15,8 +15,6 @@ namespace pam_interface
   public:
 
     RealRobotDriver(const Configuration<NB_DOFS>& config);
-    void initialize();
-    std::string get_error();
 
   };
 
