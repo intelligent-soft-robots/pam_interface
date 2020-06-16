@@ -14,7 +14,7 @@ Driver<NB_DOFS>::~Driver()
 
 template<int NB_DOFS>
 void
-Driver<NB_DOFS>::set(const PressureAction<2*NB_DOFS> &pressure_action)
+Driver<NB_DOFS>::in(const PressureAction<2*NB_DOFS> &pressure_action)
 {
   int dof,desired;
   for(unsigned int actuator=0;actuator<2*NB_DOFS;actuator++)
@@ -38,17 +38,9 @@ Driver<NB_DOFS>::set(const PressureAction<2*NB_DOFS> &pressure_action)
 
 
 template<int NB_DOFS>
-RobotState<NB_DOFS> Driver<NB_DOFS>::get()
+RobotState<NB_DOFS> Driver<NB_DOFS>::out()
 {
   return hw_interface_->get_state();
 }
 
 
-template<int NB_DOFS>
-void Driver<NB_DOFS>::stop()
-{}
-
-template<int NB_DOFS>
-void Driver<NB_DOFS>::start()
-{
-}

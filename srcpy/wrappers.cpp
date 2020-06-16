@@ -65,16 +65,12 @@ PYBIND11_MODULE(pam_interface,m)
 
   pybind11::class_<RealDriver>(m,"RealRobot")
     .def(pybind11::init<const Config>())
-    .def("start",&RealDriver::start)
-    .def("stop",&RealDriver::stop)
-    .def("set",&RealDriver::set)
-    .def("get",&RealDriver::get);
+    .def("in",&RealDriver::in)
+    .def("out",&RealDriver::out);
   
   pybind11::class_<DummyDriver>(m,"DummyRobot")
     .def(pybind11::init<const Config>())
-    .def("start",&DummyDriver::start)
-    .def("stop",&DummyDriver::stop)
-    .def("set",&DummyDriver::set)
-    .def("get",&DummyDriver::get);
+    .def("in",&DummyDriver::in)
+    .def("out",&DummyDriver::out);
   
 }

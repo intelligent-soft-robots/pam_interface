@@ -1,6 +1,5 @@
 #pragma once
 
-#include "o80/driver.hpp"
 #include "pam_interface/state/robot.hpp"
 #include "pam_interface/pressure_action.hpp"
 #include "pam_interface/real/factory.hpp"
@@ -18,18 +17,14 @@ namespace pam_interface
   
   template<int NB_DOFS>
   class Driver
-    : public o80::Driver<PressureAction<2*NB_DOFS>,
-			 RobotState<NB_DOFS>>
   {
     
   public:
 
     Driver(const Configuration<NB_DOFS>& configuration);
     ~Driver();
-    void set(const PressureAction<2*NB_DOFS> &pressure_action);
-    RobotState<NB_DOFS> get();
-    void stop();
-    void start();
+    void in(const PressureAction<2*NB_DOFS> &pressure_action);
+    RobotState<NB_DOFS> out();
     
   protected:
 

@@ -28,10 +28,10 @@ void run()
 	}
 
       // applying the action
-      robot.set(action);
+      robot.in(action);
 
       // getting the corresponding observation
-      pam_interface::RobotState<4> observation = robot.get();
+      pam_interface::RobotState<4> observation = robot.out();
 
       // checking the desired pressures have been changed as expected
       observation.print();
