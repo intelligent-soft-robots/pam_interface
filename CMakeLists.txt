@@ -77,6 +77,11 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_check
                ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/pam_check
                COPYONLY)
 
+# moving pam_server to bin folder
+configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_server
+               ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/pam_server
+               COPYONLY)
+	     
 ###################
 # Python bindings #
 ###################

@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+
+import sys
+import time
+import pam_interface
+
+SEGMENT_ID = "pam_robot"
+
+def run(real,segment_id):
+
+    # default config
+    configuration = pam_interface.DefaultConfiguration()
+
+    # interface to the robot
+    if not real:
+        robot = pam_interface.DummyRobot(configuration)
+    else:
+        robot = pam_interface.RealRobot(configuration)
+
+    # clearing the shared memory
+    pam_interface.init(segment_id)
+        
+    previous_id = None
+
+    try:
+        while True:
+
+            command = pam_interface.read_command(segment_id)
+
+            if command.get_id()>=0 and command.get_id() != previous_id:
+                previous_id = command.get_id()
+                robot.pressure_in(command.get_action())
+
+            robot_state = robot.data_out()
+
+            pam_interface.write_robot_state(segment_id,robot_state)
+
+            print("\nsegment_id:",segment_id)
+            robot_state.display()
+
+            time.sleep(0.01)
+            
+    except KeyboardInterrupt:
+        del robot
+        
+if __name__ == "__main__":
+
+    args = sys.argv[1:]
+    if "real" in args:
+        real=True
+    else:
+        real=False
+        
+    run(real,SEGMENT_ID)

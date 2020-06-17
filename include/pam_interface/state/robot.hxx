@@ -189,14 +189,26 @@ template<int NB_DOFS>
 void RobotState<NB_DOFS>::print() const
 {
   std::cout << "state id: " << id_ << "\t"
-	    << "iteration: " << control_iteration_ << "\n";
+	    << "iteration: " << control_iteration_ << std::endl;
   for(int i=0;i<NB_DOFS;i++)
     {
+      int encoder = get_encoder(i);
+      bool reference_found = get_reference_found(i);
+      double position = get_position(i);
       int current_ago = get(i,Sign::AGONIST);
       int current_antago = get(i,Sign::ANTAGONIST);
       int desired_ago = get_desired(i,Sign::AGONIST);
       int desired_antago = get_desired(i,Sign::ANTAGONIST);
-      std::cout << "dof: " << i << std::endl;
+      std::cout << "dof: " << i << " | ";
+      std::cout << "encoder: " << encoder << " | ";
+      if(reference_found)
+	{
+	  std::cout << "position: " << position << std::endl;
+	}
+      else
+	{
+	  std::cout << "*" << std::endl;
+	}
       std::cout << "\tcurrent agonist: " <<  current_ago
 		<< " | desired agonist: " << desired_ago << std::endl;
       std::cout << "\tcurrent antagonist: " <<  current_antago
