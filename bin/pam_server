@@ -38,7 +38,7 @@ def run(real,segment_id):
             print("\nsegment_id:",segment_id)
             robot_state.display()
 
-            time.sleep(0.01)
+            time.sleep(0.001)
             
     except KeyboardInterrupt:
         del robot
