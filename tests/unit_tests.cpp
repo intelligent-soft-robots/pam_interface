@@ -9,7 +9,6 @@
 #include "pam_interface/real/driver.hpp"
 #include "pam_interface/dummy/interface.hpp"
 #include "pam_interface/dummy/driver.hpp"
-#include "pam_interface/factory.hpp"
 
 
 using namespace pam_interface;
@@ -23,7 +22,7 @@ class PamInterfaceTests : public ::testing::Test
 
 TEST_F(PamInterfaceTests,dummy_interface)
 {
-  DefaultConfiguration<4> configuration(1);
+  DefaultConfiguration<4> configuration;
   DummyInterface<4> interface(configuration);
   interface.set_pressure(1,Sign::AGONIST,16000);
   interface.set_pressure(2,Sign::ANTAGONIST,16500);
@@ -34,21 +33,14 @@ TEST_F(PamInterfaceTests,dummy_interface)
 TEST_F(PamInterfaceTests,real_interface_instantiation)
 {
   DefaultConfiguration<4> configuration;
-  RealRobotInterface<4> interface(1,configuration);
+  RealRobotInterface<4> interface(configuration);
 }
 
-TEST_F(PamInterfaceTests,real_driver_instantiation)
-{
-  DefaultConfiguration<4> configuration;
-  RealRobotDriver<4> driver(1,configuration);
-}
 
 TEST_F(PamInterfaceTests,dummy_driver_instantiation)
 {
   DefaultConfiguration<4> configuration;
-  DummyRobotDriver<4> driver(1,configuration);
-  driver.initialize();
-  driver.shutdown();
+  DummyRobotDriver<4> driver(configuration);
 }
 
 TEST_F(PamInterfaceTests,dummy_robot)
@@ -56,27 +48,26 @@ TEST_F(PamInterfaceTests,dummy_robot)
 
   int robot_id=1;
   DefaultConfiguration<4> configuration;
-  
-  auto robot_ptr = Factory<4>::get_dummy(robot_id,
-					 configuration);
+
+  pam_interface::DummyRobotDriver<4> robot(configuration);
   
   usleep(2000);
   PressureAction<8> action;
   for(int dof=0;dof<4;dof++)
     {
-      action.set(dof,Sign::Agonist,15000);
-      action.set(dof,Sign::Antagonist,16000);
+      action.set(dof,pam_interface::Sign::AGONIST,15000);
+      action.set(dof,pam_interface::Sign::ANTAGONIST,16000);
     }
 
-  robot_interfaces::TimeIndex index = robot_ptr->append_desired_action(action);
-  RobotState<4> observation = robot_ptr->get_observation(index+1);
+  robot.in(action);
+  RobotState<4> observation = robot.out();
   
   int id = observation.get_id();
   int control_iteration = observation.get_control_iteration();
-  for(int dof=0;i<dof;i++)
+  for(int dof=0;dof<4;dof++)
     {
-      int desired_ago = observation.get_desired(dof,Sign::AGONIST);
-      int desired_antago = observation.get_desired(dof,Sign::ANTAGONIST);
+      int desired_ago = observation.get_desired(dof,pam_interface::Sign::AGONIST);
+      int desired_antago = observation.get_desired(dof,pam_interface::Sign::ANTAGONIST);
       ASSERT_EQ(desired_ago,15000);
       ASSERT_EQ(desired_antago,16000);
     }

@@ -68,6 +68,14 @@ target_compile_definitions(demo_real PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 
+###############
+# Executables #
+###############
+
+# moving pam_check to bin folder
+configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_check
+               ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/pam_check
+               COPYONLY)
 
 ###################
 # Python bindings #

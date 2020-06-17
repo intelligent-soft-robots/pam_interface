@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+
+import sys
+import time
+import matplotlib.pyplot as plt
+import pam_interface
+
+
+TARGET_PRESSURE = 15000
+
+# for the specified muscle, goes from its minimum pressure
+# to target pressure, then back.
+# return an array of (time stamp, input pressure, measured pressure)
+def reach_target(config,robot,dof,sign,target_pressure):
+
+    ago = "agonist"
+    if sign==pam_interface.sign.antagonist:
+        ago = "antagonist"
+    
+    time_start = time.time()
+    
+    data = []
+    
+    # init a pressure action that request the pressure
+    # of all muscles to be at their minimum
+    action = pam_interface.PressureAction()
+    for dof_ in range(4):
+        for sign_ in pam_interface.signs():
+            action.set(dof_,sign_,config.min_pressure(dof_,sign_))
+    
+    # changing only the pressure of the targeted muscle
+    # moving from its min pressure to the target pressure
+    print(dof,"\t",ago,"\tpressure up")
+    min_pressure = config.min_pressure(dof,sign)
+    for pressure in range(min_pressure,target_pressure):
+        action.set(dof,sign,pressure)
+        robot.pressure_in(action)
+        out = robot.data_out()
+        data.append((time.time()-time_start,pressure,out.get(dof,sign)))
+        time.sleep(0.001)
+    
+    # moving back to min pressure
+    print(dof,"\t",ago,"\tpressure down")
+    for p in range(min_pressure,target_pressure):
+        pressure = target_pressure+min_pressure-p
+        action.set(dof,sign,pressure)
+        robot.pressure_in(action)
+        out = robot.data_out()
+        data.append((time.time()-time_start,pressure,out.get(dof,sign)))
+        time.sleep(0.001)
+
+    return data
+
+# plot data (data as returned
+# by reach target above)
+def plot(axis,data,dof,sign):
+    if sign == 0:
+        ago = "agonist"
+    else:
+        ago = "antagonist"
+    axis.set_title(str(dof)+" | "+ago)
+    x = [d[0] for d in data]
+    p_in = [d[1] for d in data]
+    p_out = [d[2] for d in data]
+    axis.plot(x,p_in,c='red')
+    axis.plot(x,p_out,c='blue')
+    
+def run(real):
+
+    # default config
+    configuration = pam_interface.DefaultConfiguration()
+
+    # interface to the robot
+    if not real:
+        robot = pam_interface.DummyRobot(configuration)
+    else:
+        robot = pam_interface.RealRobot(configuration)
+
+    # will move all muscles to this target
+    # pressure (one by one)
+    target_pressure = TARGET_PRESSURE
+
+    # data will be {dof:[data agonist, data antagonist]}
+    all_data = {dof:[None,None] for dof in range(4)}
+
+    # moving each muscle one by one and collecting data
+    for dof in range(4):
+        for sign in pam_interface.signs():
+            data = reach_target(configuration,
+                                robot,
+                                dof,
+                                sign,
+                                target_pressure)
+            if sign == pam_interface.sign.agonist:
+                all_data[dof][0]=data
+            else:
+                all_data[dof][1]=data
+
+
+    # plotting
+    fix,axes = plt.subplots(4,2)
+    for dof in range(4):
+        for sign in range(2):
+            axis = axes[dof,sign]
+            data = all_data[dof][sign]
+            plot(axis,data,dof,sign)
+    plt.show()
+    
+
+if __name__ == "__main__":
+
+    args = sys.argv[1:]
+    if "real" in args:
+        real=True
+    else:
+        real=False
+        
+    run(real)

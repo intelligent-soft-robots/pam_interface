@@ -7,8 +7,7 @@
 
 #include "json_helper/json_helper.hpp"
 
-#define CONFIGURATION_SEGMENT_ID "pam"
-#define CONFIGURATION_OBJECT_ID "configuration"
+#include "pam_interface/sign.hpp"
 
 namespace pam_interface {
 
@@ -34,6 +33,24 @@ namespace pam_interface {
 	       min_pressures_ago,
 	       max_pressures_antago,
 	       min_pressures_antago );
+    }
+
+    int min_pressure(int dof, Sign sign)
+    {
+      if(sign==Sign::AGONIST)
+	{
+	  return min_pressures_ago[dof];
+	}
+      return min_pressures_antago[dof];
+    }
+
+    int max_pressure(int dof, Sign sign)
+    {
+      if(sign==Sign::AGONIST)
+	{
+	  return max_pressures_ago[dof];
+	}
+      return max_pressures_antago[dof];
     }
     
     int control_period;

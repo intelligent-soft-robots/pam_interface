@@ -28,8 +28,11 @@ PYBIND11_MODULE(pam_interface,m)
     .def_readwrite("max_pressures_ago",&Config::max_pressures_ago)
     .def_readwrite("min_pressures_ago",&Config::min_pressures_ago) 
     .def_readwrite("max_pressures_antago",&Config::max_pressures_antago)
-    .def_readwrite("min_pressures_antago",&Config::min_pressures_antago);
-
+    .def_readwrite("min_pressures_antago",&Config::min_pressures_antago)
+    .def("min_pressure",&Config::min_pressure)
+    .def("max_pressure",&Config::max_pressure);
+    
+  
   pybind11::class_<JsonConfig,Config>(m,"JsonConfiguration")
     .def(pybind11::init<const std::string&>())
     .def("display",&JsonConfig::print);
@@ -55,7 +58,13 @@ PYBIND11_MODULE(pam_interface,m)
   pybind11::enum_<pam_interface::Sign>(m,"sign")
     .value("agonist",pam_interface::Sign::AGONIST)
     .value("antagonist",pam_interface::Sign::ANTAGONIST);
-    
+
+  m.def("signs",[](){
+      std::array<pam_interface::Sign,2> a = {pam_interface::Sign::AGONIST,
+					     pam_interface::Sign::ANTAGONIST};
+      return a;
+    });
+  
   pybind11::class_<PAction>(m,"PressureAction")
     .def(pybind11::init<>())
     .def("get",(int(PAction::*)(int)const) &PAction::get)
@@ -65,12 +74,12 @@ PYBIND11_MODULE(pam_interface,m)
 
   pybind11::class_<RealDriver>(m,"RealRobot")
     .def(pybind11::init<const Config>())
-    .def("in",&RealDriver::in)
-    .def("out",&RealDriver::out);
+    .def("pressure_in",&RealDriver::in)
+    .def("data_out",&RealDriver::out);
   
   pybind11::class_<DummyDriver>(m,"DummyRobot")
     .def(pybind11::init<const Config>())
-    .def("in",&DummyDriver::in)
-    .def("out",&DummyDriver::out);
+    .def("pressure_in",&DummyDriver::in)
+    .def("data_out",&DummyDriver::out);
   
 }
