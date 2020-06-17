@@ -65,7 +65,7 @@ def plot(axis,data,dof,sign):
     axis.plot(x,p_in,c='red')
     axis.plot(x,p_out,c='blue')
     
-def run(real):
+def run(real,dofs):
 
     # default config
     configuration = pam_interface.DefaultConfiguration()
@@ -81,10 +81,10 @@ def run(real):
     target_pressure = TARGET_PRESSURE
 
     # data will be {dof:[data agonist, data antagonist]}
-    all_data = {dof:[None,None] for dof in range(4)}
+    all_data = {dof:[None,None] for dof in dofs}
 
     # moving each muscle one by one and collecting data
-    for dof in range(4):
+    for dof in dofs:
         for sign in pam_interface.signs():
             data = reach_target(configuration,
                                 robot,
@@ -99,7 +99,7 @@ def run(real):
 
     # plotting
     fix,axes = plt.subplots(4,2)
-    for dof in range(4):
+    for dof in dofs:
         for sign in range(2):
             axis = axes[dof,sign]
             data = all_data[dof][sign]
@@ -110,9 +110,24 @@ def run(real):
 if __name__ == "__main__":
 
     args = sys.argv[1:]
+
+    # if "real" in the arguments,
+    # using real robot
     if "real" in args:
         real=True
     else:
         real=False
+
+    # if any integer in the 
+    # arguments, performing the
+    # check only on the corresponding
+    # dof (all dofs otherwise)
+    dofs = [0,1,2,3]
+    for arg in args:
+        try : 
+            v = int(arg)
+            dofs=[v]
+        except:
+            pass
         
-    run(real)
+    run(real,dofs)
