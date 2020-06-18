@@ -3,6 +3,7 @@
 #include <array>
 #include <stdexcept>
 #include "pam_interface/sign.hpp"
+#include "shared_memory/serializer.hpp"
 
 namespace pam_interface
 {
@@ -25,10 +26,16 @@ namespace pam_interface
       
     void set(int actuator, int pressure);
     void set(int dof, Sign sign, int pressure);
-    
+
+    template <class Archive>
+    void serialize(Archive &archive)
+    {
+      archive(pressures_);
+    }
     
   private:
     
+    friend shared_memory::private_serialization;
     std::array<int,NB_ACTUATORS> pressures_;
     
   };

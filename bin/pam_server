@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+
+import sys
+import time
+import pam_interface
+
+SEGMENT_ID = "pam_robot"
+
+# pressure being an int, cast to a 
+# string of size 6
+def fix_size(pressure):
+    s = str(pressure)
+    missing = 6-len(s)
+    return " "*missing+s
+
+# print the robot state in the terminal
+def display(robot_state):
+    s = []
+    for dof in range(4):
+        observed_ago = fix_size(robot_state.get(dof,pam_interface.sign.agonist))
+        observed_antago = fix_size(robot_state.get(dof,pam_interface.sign.antagonist))
+        desired_ago = fix_size(robot_state.get_desired(dof,pam_interface.sign.agonist))
+        desired_antago = fix_size(robot_state.get_desired(dof,pam_interface.sign.antagonist))
+        d = observed_ago+" "+desired_ago+" "+observed_antago+" "+desired_antago
+        s.append(d)
+    print(" | ".join(s))
+
+# on exit: setting desired pressures to 
+# minimum (as specified by config)
+def set_pressures_to_minimum(robot,config):
+
+    def _ended(agos,antagos,
+               min_pressure_agos,
+               min_pressure_antagos):
+        if not all([a<=ma for a,ma in zip(agos,min_pressure_agos)]):
+            return False
+        if not all([a<=ma for a,ma in zip(antagos,min_pressure_antagos)]):
+            return False
+        return True
+
+    def _clip(value):
+        return max(0,value)
+
+    robot_state = robot.data_out()
+    pressure_agos = [_clip(robot_state.get_desired(dof,pam_interface.sign.agonist))
+                     for dof in range(4)]
+    pressure_antagos = [_clip(robot_state.get_desired(dof,pam_interface.sign.antagonist))
+                        for dof in range(4)]
+
+    min_pressure_agos = [ config.min_pressure(dof,pam_interface.sign.agonist)
+                          for dof in range(4) ]
+    min_pressure_antagos = [ config.min_pressure(dof,pam_interface.sign.antagonist)
+                          for dof in range(4) ]
+
+    action = pam_interface.PressureAction()
+
+    try :
+        while not _ended(pressure_agos,pressure_antagos,
+                         min_pressure_agos,min_pressure_antagos):
+            for dof in range(4):
+                if pressure_agos[dof]>min_pressure_agos[dof]:
+                    pressure_agos[dof]-=1
+                    action.set(dof,pam_interface.sign.agonist,
+                               pressure_agos[dof])
+                if pressure_antagos[dof]>min_pressure_antagos[dof]:
+                    pressure_antagos[dof]-=1
+                    action.set(dof,pam_interface.sign.antagonist,
+                               pressure_antagos[dof])
+            robot.pressure_in(action)
+            robot_state = robot.data_out()
+            display(robot_state)
+            time.sleep(0.0005) # ~2000Hz
+    except KeyboardInterrupt:
+        # if the user exited by ctr+c several times
+        set_pressures_to_minimum(robot,config)
+
+# run the control loop
+def run(real,segment_id):
+
+    # default config
+    configuration = pam_interface.DefaultConfiguration()
+
+    # interface to the robot
+    if not real:
+        robot = pam_interface.DummyRobot(configuration)
+    else:
+        robot = pam_interface.RealRobot(configuration)
+
+    # clearing the shared memory
+    pam_interface.init(segment_id)
+
+    # setting desired pressures to 0
+    zeros = pam_interface.PressureAction()
+    for actuator in range(8):
+        zeros.set(actuator,0)
+    robot.pressure_in(zeros)
+
+    # running the server
+    previous_id = None
+    try:
+        while True:
+
+            # reading command from the shared memory
+            command = pam_interface.read_command(segment_id)
+
+            # if new command, applying it
+            if command.get_id()>=0 and command.get_id() != previous_id:
+                previous_id = command.get_id()
+                robot.pressure_in(command.get_action())
+
+            # read robot state
+            robot_state = robot.data_out()
+            
+            # writing robot state to shared memory
+            pam_interface.write_robot_state(segment_id,robot_state)
+
+            # print current robot state
+            display(robot_state)
+
+            # ~ 1000Hz
+            time.sleep(0.001)
+            
+    except KeyboardInterrupt:
+        set_pressures_to_minimum(robot,configuration)
+        del robot
+        
+if __name__ == "__main__":
+
+    args = sys.argv[1:]
+    if "real" in args:
+        real=True
+    else:
+        real=False
+        
+    run(real,SEGMENT_ID)

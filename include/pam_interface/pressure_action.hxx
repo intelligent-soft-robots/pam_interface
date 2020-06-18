@@ -33,6 +33,10 @@ template<int NB_ACTUATORS>
 void PressureAction<NB_ACTUATORS>::set(int actuator,
 				       int value)
 {
+  if(value<0)
+    {
+      value=0;
+    }
   if(actuator<0 ||  actuator>=NB_ACTUATORS)
     {
       throw std::runtime_error("pam_interface::PressureAction: invalid actuator index");

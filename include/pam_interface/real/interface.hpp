@@ -68,8 +68,6 @@ namespace pam_interface {
       initialized_(false)
     {
       static_assert(NB_DOFS==4,"RealRobotInterface: only 4 dofs robot supported");
-      desired_pressures_ago_.fill(-1);
-      desired_pressures_antago_.fill(-1);
     }
 
     ~RealRobotInterface()
@@ -286,9 +284,9 @@ namespace pam_interface {
 			       nifpga_robot_->joints[dof].set_pressures[sign],value);
       // tracking desired set values
       if (sign==Sign::AGONIST){
-	desired_pressures_ago_[dof]=value;
+	this->desired_agonists_[dof]=value;
       } else {
-	desired_pressures_antago_[dof]=value;
+	this->desired_antagonists_[dof]=value;
       }
       check_status("setting pressure",status);
     }
@@ -341,9 +339,6 @@ namespace pam_interface {
     bool exception_thrown_;
     bool terminated_ ;
     bool initialized_;
-    
-    std::array<int,NB_DOFS> desired_pressures_ago_;
-    std::array<int,NB_DOFS> desired_pressures_antago_;
     
     // time this instance was created
     std::chrono::high_resolution_clock::time_point start_time_;
