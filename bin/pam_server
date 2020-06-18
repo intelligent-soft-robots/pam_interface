@@ -13,8 +13,27 @@ def fix_size(pressure):
     missing = 6-len(s)
     return " "*missing+s
 
-# print the robot state in the terminal
 def display(robot_state):
+    s = []
+    for dof in range(4):
+        observed_ago = fix_size(robot_state.get(dof,pam_interface.sign.agonist))
+        observed_antago = fix_size(robot_state.get(dof,pam_interface.sign.antagonist))
+        desired_ago = fix_size(robot_state.get_desired(dof,pam_interface.sign.agonist))
+        desired_antago = fix_size(robot_state.get_desired(dof,pam_interface.sign.antagonist))
+        ref_found = robot_state.get_reference_found(dof)
+        encoder = robot_state.get_encoder(dof)
+        position = robot_state.get_position(dof)
+        if not ref_found :
+            pos = fix_size(encoder)
+        else:
+            pos = str(position)
+        d = "("+pos+") "+observed_ago+" "+desired_ago+" "+observed_antago+" "+desired_antago
+        s.append(d)
+    print(" | ".join(s))
+
+# print the robot state in the terminal
+# (short version: only the pressures)
+def short_display(robot_state):
     s = []
     for dof in range(4):
         observed_ago = fix_size(robot_state.get(dof,pam_interface.sign.agonist))

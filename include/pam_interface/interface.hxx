@@ -36,6 +36,7 @@ RobotState<NB_DOFS> Interface<NB_DOFS>::get_state()
       double angle = encoder_to_angle(dof,encoder);
       double velocity = ( angle-previous_state_.get_position(dof) )
 	/ (static_cast<double>(delta_time)*10E-6);
+      bool ref_found = is_reference_found(dof);
 
       state.set_joint( dof,
 		       read_pressure(dof,Sign::AGONIST),
@@ -45,7 +46,7 @@ RobotState<NB_DOFS> Interface<NB_DOFS>::get_state()
 		       angle,
 		       velocity,
 		       encoder,
-		       is_reference_found(dof) );
+		       ref_found );
 	
     }
 
