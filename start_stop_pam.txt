@@ -21,12 +21,11 @@ Starting state:
 - 4th degree of freedom of the robot "aligned" (silver paint marking aligned with zero)
 
 Starting steps:
- 1. Start server (pam_interface or o80_pam)
- 2. Look at observed pressures. Should be around zero.
- 3. Switch power outlet on. Pressures should move to around 6000 (i.e. 0 bar)
- 4. Turn on pressure on valve (vertical), pressures should reach their minimum value as set in the used json configuration file.
- 5. Release emergency button
- 6. Observe robot. A short motion (i.e. half a second) should be observed.
+ 1. Start electronic box (switch power outlet on)
+ 2. Start server (pam_interface or o80_pam)
+ 3. Turn on pressure on valve (vertical), pressures should reach their minimum value as set in the used json configuration file.
+ 4. Release emergency button
+ 5. Observe robot. A short motion (i.e. half a second) should be observed.
                    If the robot keeps moving, press emergency button.
 
 Stopping steps:
