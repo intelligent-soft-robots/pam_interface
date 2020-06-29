@@ -5,18 +5,19 @@ project(pam_interface)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 find_package(catkin REQUIRED COMPONENTS
+  mpi_cmake_modules
   pybind11_catkin
   shared_memory
   json_helper
 )
 
-DEFINE_OS()
-
 catkin_package(
  LIBRARIES pam_interface
  INCLUDE_DIRS include
- CATKIN_DEPENDS pybind11_catkin json_helper shared_memory
+ CATKIN_DEPENDS pybind11_catkin json_helper shared_memory mpi_cmake_modules
 )
+
+DEFINE_OS()
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
