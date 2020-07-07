@@ -118,3 +118,9 @@ target_compile_definitions(pam_interface_unit_tests PRIVATE
 
 set(PAM_BITFILE "${BITFILE_PATH}/pam_robot.lvbitx" PARENT_SCOPE)
 set(JSON_DEFAULT_CONFIG_FILE "${JSON_CONFIG_DIR}/pam.json" PARENT_SCOPE)
+
+#################
+# Documentation #
+#################
+
+build_sphinx_documentation()
