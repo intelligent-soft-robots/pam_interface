@@ -26,12 +26,6 @@ namespace pam_interface {
     RobotState();
     ~RobotState();
 
-    RobotState(const RobotState<NB_DOFS>& other);
-    RobotState(RobotState<NB_DOFS>&& other) noexcept;
-    RobotState<NB_DOFS>& operator=(const RobotState<NB_DOFS>& other);
-    RobotState<NB_DOFS>& operator=(RobotState<NB_DOFS>&& other) noexcept;
-
-    
   public:
 
     /* set the values for the specified joint

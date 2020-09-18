@@ -39,55 +39,6 @@ RobotState<NB_DOFS>::~RobotState(){}
 
 
 template<int NB_DOFS>
-void RobotState<NB_DOFS>::copy(const RobotState<NB_DOFS>& other)
-{
-  joints_ = other.joints_;
-  id_ = other.id_;
-  control_iteration_ = other.control_iteration_;
-  sensor_iteration_ = other.sensor_iteration_;
-  time_stamp_ = other.time_stamp_;
-}
-
-
-template<int NB_DOFS>
-RobotState<NB_DOFS>::RobotState(const RobotState<NB_DOFS>& other)
-{
-  copy(other);
-}
-
-
-template<int NB_DOFS>
-RobotState<NB_DOFS>::RobotState(RobotState<NB_DOFS>&& other) noexcept
-  : joints_(std::move(other.joints_))
-{
-  id_ = other.id_;
-  control_iteration_ = other.control_iteration_;
-  sensor_iteration_ = other.sensor_iteration_;
-  time_stamp_ = other.time_stamp_;
-}
-
-	       
-
-template<int NB_DOFS>
-RobotState<NB_DOFS>& RobotState<NB_DOFS>::operator=(const RobotState<NB_DOFS>& other)
-{
-  copy(other);
-  return *this;
-}
-
-template<int NB_DOFS>
-RobotState<NB_DOFS>& RobotState<NB_DOFS>::operator=(RobotState<NB_DOFS>&& other) noexcept
-{
-  joints_ = std::move(other.joints_);
-  time_stamp_=other.time_stamp_;
-  id_=other.id_;
-  control_iteration_=other.control_iteration_;
-  sensor_iteration_=other.sensor_iteration_;
-  return *this;
-}
-
-
-template<int NB_DOFS>
 void RobotState<NB_DOFS>::set_joint(int dof,
 				       int agonist,
 				       int antagonist,

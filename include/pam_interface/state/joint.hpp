@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 namespace pam_interface
 {
 
@@ -27,8 +29,8 @@ namespace pam_interface
     int agonist;
     int antagonist;
     int encoder;
-    int position;
-    int velocity;
+    double position;
+    double velocity;
     bool reference_found;
 
   };

@@ -69,6 +69,14 @@ target_compile_definitions(demo_real PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 
+add_executable(serialize_robot_state
+  demos/serialize_robot_state.cpp)
+target_link_libraries(serialize_robot_state pam_interface)
+target_compile_definitions(serialize_robot_state PRIVATE
+  PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
+  BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
+
+
 ###############
 # Executables #
 ###############
