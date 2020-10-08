@@ -117,9 +117,9 @@ Starting steps:
 
  1. Start electronic box (switch power outlet on)
  2. Start server (pam_interface or o80_pam)
- 3. Turn on pressure on valve (vertical): pressures should reach their minimum values as set in the used json configuration file.
- 4. Release emergency button
- 5. Observe robot. A short motion (i.e. half a second) should be observed. If the robot keeps moving, press emergency button.
+ 3. Turn on pressure on valve (vertical)
+ 4. Release emergency button: pressures should reach their minimum values as set in the used json configuration file
+ 5. Observe robot. A short motion (i.e. half a second) should be observed. If the robot keeps moving, press emergency button
 
 Stopping steps:
 
