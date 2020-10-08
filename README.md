@@ -94,7 +94,7 @@ See its documentation [here](to do: point to the right url)
 Parts :
 
 - the "electronic box", which is turned on via the power outlet
-- the pressure valve (against the wall). Horizontal means close
+- the pressure valve (against the wall). Horizontal means closed
 - the emergency stop button, which blocks the pressure
 - the control software server (pam_interface or o80_pam)
 
@@ -117,7 +117,7 @@ Starting steps:
 
  1. Start electronic box (switch power outlet on)
  2. Start server (pam_interface or o80_pam)
- 3. Turn on pressure on valve (vertical), pressures should reach their minimum value as set in the used json configuration file.
+ 3. Turn on pressure on valve (vertical): pressures should reach their minimum values as set in the used json configuration file.
  4. Release emergency button
  5. Observe robot. A short motion (i.e. half a second) should be observed. If the robot keeps moving, press emergency button.
 
