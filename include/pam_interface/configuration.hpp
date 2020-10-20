@@ -80,7 +80,8 @@ namespace pam_interface {
   public:
 
     DefaultConfiguration();
-
+    static std::string get_default_configuration_path();
+    
   };
 
 

@@ -41,7 +41,8 @@ PYBIND11_MODULE(pam_interface,m)
   
   pybind11::class_<DefaultConfig,JsonConfig>(m,"DefaultConfiguration")
     .def(pybind11::init<>())
-    .def("display",&DefaultConfig::print);
+    .def("display",&DefaultConfig::print)
+    .def("get_path",&DefaultConfig::get_default_configuration_path);
   
   pybind11::class_<RobotState>(m,"RobotState")
     .def(pybind11::init<>())

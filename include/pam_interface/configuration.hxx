@@ -100,8 +100,14 @@ JsonConfiguration<NB_DOFS>::JsonConfiguration(const std::string &file_path)
 }
 
 
-template< int NB_DOFS>
+template<int NB_DOFS>
 DefaultConfiguration<NB_DOFS>::DefaultConfiguration()
   : JsonConfiguration<NB_DOFS>(PAM_DEFAULT_CONFIG_FILE_PATH) {}
 
 
+template<int NB_DOFS>
+std::string DefaultConfiguration<NB_DOFS>::get_default_configuration_path()
+{
+  return std::string(PAM_DEFAULT_CONFIG_FILE_PATH);
+}
+  
