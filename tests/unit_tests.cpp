@@ -46,7 +46,6 @@ TEST_F(PamInterfaceTests,dummy_driver_instantiation)
 TEST_F(PamInterfaceTests,dummy_robot)
 {
 
-  int robot_id=1;
   DefaultConfiguration<4> configuration;
 
   pam_interface::DummyRobotDriver<4> robot(configuration);
@@ -62,8 +61,6 @@ TEST_F(PamInterfaceTests,dummy_robot)
   robot.in(action);
   RobotState<4> observation = robot.out();
   
-  int id = observation.get_id();
-  int control_iteration = observation.get_control_iteration();
   for(int dof=0;dof<4;dof++)
     {
       int desired_ago = observation.get_desired(dof,pam_interface::Sign::AGONIST);

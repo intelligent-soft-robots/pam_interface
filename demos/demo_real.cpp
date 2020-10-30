@@ -4,8 +4,6 @@
 void run()
 {
 
-  int robot_id = 1;
-  
   // configuration for this robot instance
   pam_interface::DefaultConfiguration<4> configuration;
   

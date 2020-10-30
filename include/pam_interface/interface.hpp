@@ -38,7 +38,7 @@ namespace pam_interface {
     virtual int read_control_iteration() =0;
     virtual bool is_reference_found(int dof) =0;
     
-    virtual int set_pressure(int dof, Sign sign, int value)=0;
+    virtual void set_pressure(int dof, Sign sign, int value)=0;
 
   protected:
 

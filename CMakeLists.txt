@@ -1,59 +1,87 @@
-cmake_minimum_required(VERSION 2.8.7)
-
+cmake_minimum_required(VERSION 3.10.2)
 project(pam_interface)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED on)
 
-find_package(catkin REQUIRED COMPONENTS
+
+################
+# Dependencies #
+################
+
+find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+find_package(mpi_cmake_modules REQUIRED)
+find_package(pybind11_vendor REQUIRED)
+find_package(pybind11 REQUIRED)
+find_package(shared_memory REQUIRED)
+find_package(json_helper REQUIRED)
+ament_export_dependencies(
   mpi_cmake_modules
-  pybind11_catkin
+  pybind11
   shared_memory
-  json_helper
-)
+  json_helper)
 
-catkin_package(
- LIBRARIES pam_interface
- INCLUDE_DIRS include
- CATKIN_DEPENDS pybind11_catkin json_helper shared_memory mpi_cmake_modules
-)
+# prepare to export all needed targets
+set(all_targets)
+set(all_target_exports)
 
-DEFINE_OS()
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+#######################
+# Configuration files #
+#######################
 
-# absolute path to the lvbitx file that configures connection between the control pc and
-# the fpga.
+# configuration files are copied to /opt/mpi-is/
+# (for running on current machine)
+# and install/pam_interface/opt/mpi-is/
+# (for being included in any debian created from the
+# install folder)
 get_filename_component(BITFILE_PATH bitfile ABSOLUTE)
-set(PAM_BITFILE "${BITFILE_PATH}/pam_robot.lvbitx")
-
-# absolute path to default json configuration file
 get_filename_component(JSON_CONFIG_DIR config ABSOLUTE)
-set(JSON_DEFAULT_CONFIG_FILE "${JSON_CONFIG_DIR}/pam.json")
+install(FILES
+  "${BITFILE_PATH}/pam_robot.lvbitx"
+  "${JSON_CONFIG_DIR}/pam.json"
+  DESTINATION /opt/mpi-is/)
+install(FILES
+  "${BITFILE_PATH}/pam_robot.lvbitx"
+  "${JSON_CONFIG_DIR}/pam.json"
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/opt/mpi-is/)
+set(JSON_DEFAULT_CONFIG_FILE "/opt/mpi-is/pam.json")
+set(PAM_BITFILE "/opt/mpi-is/pam_robot.lvbitx")
 
-# to be sure that linkage remains after install
-set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 
 ###########
 # Library #
 ###########
 
-add_library(pam_interface
+
+add_library( ${PROJECT_NAME} SHARED
   src/NiFpga.c
   src/NiFpga_exception.cpp
   src/NiFpga_robot.cpp
   src/typedefs.cpp
   src/factories.cpp)
-target_link_libraries(pam_interface dl ${catkin_LIBRARIES})
+target_include_directories(
+  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+ament_target_dependencies(${PROJECT_NAME}
+  shared_memory
+  json_helper)
+target_link_libraries(${PROJECT_NAME} shared_memory::shared_memory)
+target_link_libraries(${PROJECT_NAME} json_helper::json_helper)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_DL_LIBS})
+ament_export_interfaces(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 target_compile_definitions(pam_interface PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 
-########
-# Demo #
-########
+list(APPEND all_targets ${PROJECT_NAME})
+list(APPEND all_target_exports export_${PROJECT_NAME})
+
+
+#########
+# Demos #
+#########
 
 add_executable(demo_dummy
   demos/demo_dummy.cpp)
@@ -61,6 +89,7 @@ target_link_libraries(demo_dummy pam_interface)
 target_compile_definitions(demo_dummy PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
+list(APPEND all_targets demo_dummy)
 
 add_executable(demo_real
   demos/demo_real.cpp)
@@ -68,6 +97,7 @@ target_link_libraries(demo_real pam_interface)
 target_compile_definitions(demo_real PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
+list(APPEND all_targets demo_real)
 
 add_executable(serialize_robot_state
   demos/serialize_robot_state.cpp)
@@ -75,6 +105,7 @@ target_link_libraries(serialize_robot_state pam_interface)
 target_compile_definitions(serialize_robot_state PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
+list(APPEND all_targets serialize_robot_state)
 
 
 ###############
@@ -83,52 +114,63 @@ target_compile_definitions(serialize_robot_state PRIVATE
 
 # moving pam_check to bin folder
 configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_check
-               ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/pam_check
+               ${CMAKE_INSTALL_PREFIX}/bin/pam_check
                COPYONLY)
 
 # moving pam_server to bin folder
 configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_server
-               ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_BIN_DESTINATION}/pam_server
+               ${CMAKE_INSTALL_PREFIX}/pam_server
                COPYONLY)
+
 	     
 ###################
-# Python bindings #
+# Python wrappers #
 ###################
 
-pybind11_add_module(pam_interface_py srcpy/wrappers.cpp)
-target_link_libraries(pam_interface_py PRIVATE pam_interface ${catkin_LIBRARIES})
-set_target_properties(pam_interface_py PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_PYTHON_DESTINATION}
-  OUTPUT_NAME pam_interface)
-target_compile_definitions(pam_interface_py PRIVATE
+add_library(${PROJECT_NAME}_py MODULE srcpy/wrappers.cpp)
+target_link_libraries(${PROJECT_NAME}_py PRIVATE pybind11::module)
+target_link_libraries(${PROJECT_NAME}_py PRIVATE ${PYTHON_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_py PRIVATE ${PROJECT_NAME})
+set_target_properties(${PROJECT_NAME}_py
+                      PROPERTIES PREFIX "" SUFFIX "${PYTHON_MODULE_EXTENSION}")
+target_include_directories(
+  ${PROJECT_NAME}_py
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:include> SYSTEM
+	 PUBLIC ${PYTHON_INCLUDE_DIRS})
+target_compile_definitions(${PROJECT_NAME}_py PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
-install(TARGETS pam_interface_py DESTINATION ${CATKIN_GLOBAL_PYTHON_DESTINATION})
+_ament_cmake_python_get_python_install_dir()
+install(TARGETS ${PROJECT_NAME} DESTINATION ${PYTHON_INSTALL_DIR})
+
+
+######################
+# Install and export #
+######################\
+
+install(DIRECTORY include/ DESTINATION include)
+install(
+  TARGETS ${all_targets}
+  EXPORT ${all_target_exports}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES
+  DESTINATION include)
+ament_package()
+
 
 ##############
 # Unit tests #
 ##############
 
-catkin_add_gtest(pam_interface_unit_tests
-  tests/main.cpp
-  tests/unit_tests.cpp)
-target_link_libraries(pam_interface_unit_tests pam_interface ${catkin_libraries})
-target_compile_definitions(pam_interface_unit_tests PRIVATE
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_${PROJECT_NAME}_cpp tests/main.cpp tests/unit_tests.cpp)
+  target_link_libraries(test_${PROJECT_NAME}_cpp ${PROJECT_NAME})
+  target_compile_definitions(test_${PROJECT_NAME}_cpp PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
+endif()
 
-################
-# CMake Export #
-################
-
-# so these can be used by dependend catkin packages
-# (e.g. O8O_pam)
-
-set(PAM_BITFILE "${BITFILE_PATH}/pam_robot.lvbitx" PARENT_SCOPE)
-set(JSON_DEFAULT_CONFIG_FILE "${JSON_CONFIG_DIR}/pam.json" PARENT_SCOPE)
-
-#################
-# Documentation #
-#################
-
-build_sphinx_documentation()

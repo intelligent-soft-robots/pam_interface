@@ -14,7 +14,7 @@ RobotState<NB_DOFS> Interface<NB_DOFS>::get_state()
 
   int sensor_iteration_ = read_sensor_iteration();
   if( sensor_iteration_==previous_state_.get_sensor_iteration() &&
-      !previous_state_.get_id()<0 )
+      !(previous_state_.get_id()<0) )
     {
       return previous_state_;
     }

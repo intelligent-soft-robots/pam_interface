@@ -41,9 +41,9 @@ namespace pam_interface {
     std::chrono::microseconds get_control_period() ;
     std::chrono::microseconds get_sensor_period() ;
 
-    int set_pressure(int dof,
-		     Sign sign,
-		     int value);
+    void set_pressure(int dof,
+		      Sign sign,
+		      int value);
 
   private:
 

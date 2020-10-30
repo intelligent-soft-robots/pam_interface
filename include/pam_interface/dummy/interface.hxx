@@ -56,9 +56,9 @@ static int clip(int min,int max, int v)
 }
 
 template<int NB_DOFS>
-int DummyInterface<NB_DOFS>::set_pressure(int dof,
-					     Sign sign,
-					     int value)
+void DummyInterface<NB_DOFS>::set_pressure(int dof,
+					   Sign sign,
+					   int value)
 {
 
   // not actually setting any id, this is mainly for other interfaces, such as the
@@ -79,7 +79,6 @@ int DummyInterface<NB_DOFS>::set_pressure(int dof,
       this->pressures_antago_[dof]=value;
       this->desired_antagonists_[dof]=value;
     }
-  return value;
 }
 
 template<int NB_DOFS>

@@ -257,6 +257,7 @@ namespace pam_interface {
 			      nifpga_robot_->iteration_control,
 			      &get);
       check_status("reading motor iteration",status);
+      return get;
     }
     
     bool is_reference_found(int dof) 
@@ -276,7 +277,7 @@ namespace pam_interface {
       return v;
     }
     
-    int set_pressure(int dof, Sign sign, int value)
+    void set_pressure(int dof, Sign sign, int value)
     {
       if(sign==Sign::AGONIST)
 	{
