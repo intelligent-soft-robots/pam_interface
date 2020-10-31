@@ -14,7 +14,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>pybind11_catkin</depend>
+  <depend>pybind11_vendor</depend>
   <depend>json_helper</depend>
   <depend>shared_memory</depend>
   <depend>mpi_cmake_modules</depend>
@@ -22,6 +22,7 @@
   <test_depend>ament_cmake_gtest</test_depend>
   
   <export>
+    <build_type>ament_cmake</build_type>
   </export>
   
 </package>
