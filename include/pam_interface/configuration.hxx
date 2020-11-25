@@ -1,13 +1,13 @@
 
-template< int NB_DOFS>
+template<int NB_DOFS>
 Configuration<NB_DOFS>::Configuration()
 {}
 
 
-template< int NB_DOFS>
+template<int NB_DOFS>
 Configuration<NB_DOFS>::~Configuration(){}
 
-template< int NB_DOFS>
+template<int NB_DOFS>
 void Configuration<NB_DOFS>::print() const {
   std::cout << "\tdegrees of freedom: " << NB_DOFS << "\n";
   std::cout << "\tcontrol period: " << control_period << "\n";
@@ -26,6 +26,58 @@ void Configuration<NB_DOFS>::print() const {
 	      << max_pressures_antago[i_dof] << "\n";
   }
   std::cout << "\n";
+}
+
+template<int NB_DOFS>
+int Configuration<NB_DOFS>::min_pressure(int dof, Sign sign)
+{
+  if(sign==Sign::AGONIST)
+    {
+      return min_pressures_ago[dof];
+    }
+  return min_pressures_antago[dof];
+}
+
+template<int NB_DOFS>
+int Configuration<NB_DOFS>::max_pressure(int dof, Sign sign)
+{
+  if(sign==Sign::AGONIST)
+    {
+      return max_pressures_ago[dof];
+    }
+  return max_pressures_antago[dof];
+}
+
+template<int NB_DOFS>
+int Configuration<NB_DOFS>::min_pressure(){
+  int min = std::numeric_limits<int>::max();
+  for (Sign sign: signs){
+    for (int dof=0;dof<NB_DOFS;dof++)
+      {
+	int min_ = min_pressure(dof,sign);
+	if (min_<min)
+	  {
+	    min = min_;
+	  }
+      }
+  }
+  return min;
+}
+
+template<int NB_DOFS>
+int Configuration<NB_DOFS>::max_pressure(){
+  int max = std::numeric_limits<int>::max();
+  for (Sign sign: signs){
+    for (int dof=0;dof<NB_DOFS;dof++)
+      {
+	int max_ = max_pressure(dof,sign);
+	if (max_>max)
+	  {
+	    max = max_;
+	  }
+      }
+  }
+  return max;
 }
 
 template<typename T>

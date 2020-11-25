@@ -60,7 +60,7 @@ add_library( ${PROJECT_NAME} SHARED
   src/NiFpga_exception.cpp
   src/NiFpga_robot.cpp
   src/typedefs.cpp
-  src/factories.cpp)
+  src/factories.cpp )
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

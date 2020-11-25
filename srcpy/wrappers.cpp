@@ -31,9 +31,10 @@ PYBIND11_MODULE(pam_interface,m)
     .def_readwrite("min_pressures_ago",&Config::min_pressures_ago) 
     .def_readwrite("max_pressures_antago",&Config::max_pressures_antago)
     .def_readwrite("min_pressures_antago",&Config::min_pressures_antago)
-    .def("min_pressure",&Config::min_pressure)
-    .def("max_pressure",&Config::max_pressure);
-    
+    .def("min_pressure",pybind11::overload_cast<int,pam_interface::Sign>(&Config::min_pressure))
+    .def("max_pressure",pybind11::overload_cast<int,pam_interface::Sign>(&Config::max_pressure))
+    .def("min_pressure",pybind11::overload_cast<>(&Config::min_pressure))
+    .def("max_pressure",pybind11::overload_cast<>(&Config::max_pressure));
   
   pybind11::class_<JsonConfig,Config>(m,"JsonConfiguration")
     .def(pybind11::init<const std::string&>())

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <limits>
 #include "shared_memory/shared_memory.hpp"
 #include <string>
 #include <vector>
@@ -35,23 +36,10 @@ namespace pam_interface {
 	       min_pressures_antago );
     }
 
-    int min_pressure(int dof, Sign sign)
-    {
-      if(sign==Sign::AGONIST)
-	{
-	  return min_pressures_ago[dof];
-	}
-      return min_pressures_antago[dof];
-    }
-
-    int max_pressure(int dof, Sign sign)
-    {
-      if(sign==Sign::AGONIST)
-	{
-	  return max_pressures_ago[dof];
-	}
-      return max_pressures_antago[dof];
-    }
+    int min_pressure(int dof, Sign sign);
+    int max_pressure(int dof, Sign sign);
+    int min_pressure();
+    int max_pressure();
     
     int control_period;
     int sensor_period;
