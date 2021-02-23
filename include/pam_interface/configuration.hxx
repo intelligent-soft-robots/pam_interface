@@ -71,7 +71,7 @@ int Configuration<NB_DOFS>::max_pressure(){
     for (int dof=0;dof<NB_DOFS;dof++)
       {
 	int max_ = max_pressure(dof,sign);
-	if (max_>max)
+	if (max_<max)
 	  {
 	    max = max_;
 	  }
