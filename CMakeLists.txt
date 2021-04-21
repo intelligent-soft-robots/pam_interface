@@ -37,16 +37,23 @@ set(all_target_exports)
 # install folder)
 get_filename_component(BITFILE_PATH bitfile ABSOLUTE)
 get_filename_component(JSON_CONFIG_DIR config ABSOLUTE)
-install(FILES
-  "${BITFILE_PATH}/pam_robot.lvbitx"
-  "${JSON_CONFIG_DIR}/pam.json"
-  DESTINATION /opt/mpi-is/pam_interface/)
+# installing files in /opt/mpi-is/ if exists
+if (EXISTS "/opt/mpi-is")
+  install(FILES
+    "${BITFILE_PATH}/pam_robot.lvbitx"
+    "${JSON_CONFIG_DIR}/pam.json"
+    DESTINATION /opt/mpi-is/pam_interface/)
+  set(JSON_DEFAULT_CONFIG_FILE "/opt/mpi-is/pam_interface/pam.json")
+  set(PAM_BITFILE "/opt/mpi-is/pam_interface/pam_robot.lvbitx")
+else()
+  set(JSON_DEFAULT_CONFIG_FILE "${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pam.json")
+  set(PAM_BITFILE "${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pam_robot.lvbitx")
+endif()
+# also installing in the workspace/install folder  
 install(FILES
   "${BITFILE_PATH}/pam_robot.lvbitx"
   "${JSON_CONFIG_DIR}/pam.json"
   DESTINATION ${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/)
-set(JSON_DEFAULT_CONFIG_FILE "/opt/mpi-is/pam_interface/pam.json")
-set(PAM_BITFILE "/opt/mpi-is/pam_interface/pam_robot.lvbitx")
 
 
 ###########
