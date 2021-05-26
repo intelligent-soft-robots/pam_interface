@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "generated.h"
 
 const int PLUS_INDEXES[4] = {0, 2, 4, 7};
