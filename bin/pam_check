@@ -11,103 +11,99 @@ DELTA_PRESSURE = 2000
 # for the specified muscle, goes from its current pressure
 # to target pressure (which is current pressure + delta pressure), then back.
 # return an array of (time stamp, input pressure, measured pressure)
-def reach_target(segment_id,dofs,dof,sign,delta_pressure):
+def reach_target(segment_id, dofs, dof, sign, delta_pressure):
 
     time_start = time.time()
-    
+
     data = []
-    
+
     # current pressures
     robot_state = pam_interface.read_robot_state(segment_id)
-    agos = [ robot_state.get(dof_,pam_interface.sign.agonist)
-             for dof_ in range(4) ]
-    antagos = [ robot_state.get(dof_,pam_interface.sign.antagonist)
-                for dof_ in range(4) ]
+    agos = [robot_state.get(dof_, pam_interface.sign.agonist) for dof_ in range(4)]
+    antagos = [
+        robot_state.get(dof_, pam_interface.sign.antagonist) for dof_ in range(4)
+    ]
 
     if sign == pam_interface.sign.agonist:
         controlled_pressures = agos
         ago = "agonist"
-        target_pressure = agos[dof]+delta_pressure
+        target_pressure = agos[dof] + delta_pressure
     else:
         controlled_pressures = antagos
         ago = "antagonist"
-        target_pressure = antagos[dof]+delta_pressure
+        target_pressure = antagos[dof] + delta_pressure
 
     # changing only the pressure of the targeted muscle
     # moving from its start pressure to the target pressure
-    print(dof,"\t",ago,"\tpressure up")
+    print(dof, "\t", ago, "\tpressure up")
     start_pressure = controlled_pressures[dof]
-    for pressure in range(start_pressure,target_pressure,10):
-        controlled_pressures[dof]=pressure
-        pam_interface.write_command(segment_id,agos,antagos)
+    for pressure in range(start_pressure, target_pressure, 10):
+        controlled_pressures[dof] = pressure
+        pam_interface.write_command(segment_id, agos, antagos)
         robot_state = pam_interface.read_robot_state(segment_id)
-        data.append((time.time()-time_start,pressure,robot_state.get(dof,sign)))
+        data.append((time.time() - time_start, pressure, robot_state.get(dof, sign)))
         time.sleep(0.01)
-    
+
     # moving back to min pressure
-    print(dof,"\t",ago,"\tpressure down")
-    for p in range(start_pressure,target_pressure,10):
-        pressure = target_pressure+start_pressure-p
-        controlled_pressures[dof]=pressure
-        pam_interface.write_command(segment_id,agos,antagos)
+    print(dof, "\t", ago, "\tpressure down")
+    for p in range(start_pressure, target_pressure, 10):
+        pressure = target_pressure + start_pressure - p
+        controlled_pressures[dof] = pressure
+        pam_interface.write_command(segment_id, agos, antagos)
         robot_state = pam_interface.read_robot_state(segment_id)
-        data.append((time.time()-time_start,pressure,robot_state.get(dof,sign)))
+        data.append((time.time() - time_start, pressure, robot_state.get(dof, sign)))
         time.sleep(0.01)
 
     return data
 
+
 # plot data (data as returned
 # by reach target above)
-def plot(axis,data,dof,sign):
+def plot(axis, data, dof, sign):
     if sign == 0:
         ago = "agonist"
     else:
         ago = "antagonist"
-    axis.set_title(str(dof)+" | "+ago)
+    axis.set_title(str(dof) + " | " + ago)
     x = [d[0] for d in data]
     p_in = [d[1] for d in data]
     p_out = [d[2] for d in data]
-    axis.plot(x,p_out,c='blue')
-    axis.plot(x,p_in,c='red')
+    axis.plot(x, p_out, c="blue")
+    axis.plot(x, p_in, c="red")
 
-    
-def run(segment_id,delta_pressure,dofs):
+
+def run(segment_id, delta_pressure, dofs):
 
     # data will be {dof:[data agonist, data antagonist]}
-    all_data = {dof:[None,None] for dof in dofs}
+    all_data = {dof: [None, None] for dof in dofs}
 
     # moving each muscle one by one and collecting data
     for dof in dofs:
         for sign in pam_interface.signs():
-            data = reach_target(segment_id,
-                                dofs,
-                                dof,
-                                sign,
-                                delta_pressure)
+            data = reach_target(segment_id, dofs, dof, sign, delta_pressure)
             if sign == pam_interface.sign.agonist:
-                all_data[dof][0]=data
+                all_data[dof][0] = data
             else:
-                all_data[dof][1]=data
-
+                all_data[dof][1] = data
 
     # plotting
-    fix,axes = plt.subplots(4,2)
+    fix, axes = plt.subplots(4, 2)
     for dof in dofs:
         for sign in range(2):
-            axis = axes[dof,sign]
+            axis = axes[dof, sign]
             data = all_data[dof][sign]
-            plot(axis,data,dof,sign)
+            plot(axis, data, dof, sign)
     plt.show()
-    
+
 
 if __name__ == "__main__":
 
-    dofs = [0,1,2,3]
+    dofs = [0, 1, 2, 3]
     for arg in sys.argv:
         try:
             dof = int(arg)
             dofs = [dof]
         except:
             pass
-    
-    run(SEGMENT_ID,DELTA_PRESSURE,dofs)
+
+    run(SEGMENT_ID, DELTA_PRESSURE, dofs)

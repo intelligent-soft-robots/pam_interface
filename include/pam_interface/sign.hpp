@@ -1,8 +1,12 @@
 #pragma once
 
-namespace pam_interface {
+namespace pam_interface
+{
+enum Sign
+{
+    AGONIST,
+    ANTAGONIST
+};
+static const Sign signs[2] = {Sign::AGONIST, Sign::ANTAGONIST};
 
-  enum Sign {AGONIST,ANTAGONIST};
-  static const Sign signs[2] = {Sign::AGONIST,Sign::ANTAGONIST};
-  
-}
+}  // namespace pam_interface

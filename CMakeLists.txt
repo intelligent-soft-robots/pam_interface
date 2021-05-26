@@ -89,29 +89,29 @@ list(APPEND all_target_exports export_${PROJECT_NAME})
 # Demos #
 #########
 
-add_executable(demo_dummy
+add_executable(pam_interface_demo_dummy
   demos/demo_dummy.cpp)
-target_link_libraries(demo_dummy pam_interface)
-target_compile_definitions(demo_dummy PRIVATE
+target_link_libraries(pam_interface_demo_dummy pam_interface)
+target_compile_definitions(pam_interface_demo_dummy PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
-list(APPEND all_targets demo_dummy)
+list(APPEND all_targets pam_interface_demo_dummy)
 
-add_executable(demo_real
+add_executable(pam_interface_demo_real
   demos/demo_real.cpp)
-target_link_libraries(demo_real pam_interface)
-target_compile_definitions(demo_real PRIVATE
+target_link_libraries(pam_interface_demo_real pam_interface)
+target_compile_definitions(pam_interface_demo_real PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
-list(APPEND all_targets demo_real)
+list(APPEND all_targets pam_interface_demo_real)
 
-add_executable(serialize_robot_state
+add_executable(pam_interface_demo_serialize_robot_state
   demos/serialize_robot_state.cpp)
-target_link_libraries(serialize_robot_state pam_interface)
-target_compile_definitions(serialize_robot_state PRIVATE
+target_link_libraries(pam_interface_demo_serialize_robot_state pam_interface)
+target_compile_definitions(pam_interface_demo_serialize_robot_state PRIVATE
   PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
-list(APPEND all_targets serialize_robot_state)
+list(APPEND all_targets pam_interface_demo_serialize_robot_state)
 
 
 ###############
@@ -125,7 +125,7 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_check
 
 # moving pam_server to bin folder
 configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_server
-               ${CMAKE_INSTALL_PREFIX}/pam_server
+               ${CMAKE_INSTALL_PREFIX}/bin/pam_server
                COPYONLY)
 
 	     

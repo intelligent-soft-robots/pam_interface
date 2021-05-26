@@ -1,86 +1,83 @@
 
 
-template<int NB_ACTUATORS>
-PressureAction<NB_ACTUATORS>::PressureAction(const PressureAction<NB_ACTUATORS>& other)
-  : pressures_(other.pressures_)
-{}
-  
-
-template<int NB_ACTUATORS>
-PressureAction<NB_ACTUATORS>::PressureAction(PressureAction<NB_ACTUATORS>&& other) noexcept
-  : pressures_(std::move(other.pressures_))
-{}
-
-
-template<int NB_ACTUATORS>
-PressureAction<NB_ACTUATORS>&
-PressureAction<NB_ACTUATORS>::operator=(const PressureAction<NB_ACTUATORS>& other)
+template <int NB_ACTUATORS>
+PressureAction<NB_ACTUATORS>::PressureAction(
+    const PressureAction<NB_ACTUATORS>& other)
+    : pressures_(other.pressures_)
 {
-  pressures_ = other.pressures_;
-  return *this;
 }
 
-
-template<int NB_ACTUATORS>
-PressureAction<NB_ACTUATORS>&
-PressureAction<NB_ACTUATORS>::operator=(PressureAction<NB_ACTUATORS>&& other) noexcept
+template <int NB_ACTUATORS>
+PressureAction<NB_ACTUATORS>::PressureAction(
+    PressureAction<NB_ACTUATORS>&& other) noexcept
+    : pressures_(std::move(other.pressures_))
 {
-  pressures_ = std::move(other.pressures_);
-  return *this;
 }
 
-template<int NB_ACTUATORS>
-void PressureAction<NB_ACTUATORS>::set(int actuator,
-				       int value)
+template <int NB_ACTUATORS>
+PressureAction<NB_ACTUATORS>& PressureAction<NB_ACTUATORS>::operator=(
+    const PressureAction<NB_ACTUATORS>& other)
 {
-  if(value<0)
-    {
-      value=0;
-    }
-  if(actuator<0 ||  actuator>=NB_ACTUATORS)
-    {
-      throw std::runtime_error("pam_interface::PressureAction: invalid actuator index");
-    }
-  pressures_[actuator]=value;
+    pressures_ = other.pressures_;
+    return *this;
 }
 
-template<int NB_ACTUATORS>
-void PressureAction<NB_ACTUATORS>::set(int dof,
-				       Sign sign,
-				       int value)
+template <int NB_ACTUATORS>
+PressureAction<NB_ACTUATORS>& PressureAction<NB_ACTUATORS>::operator=(
+    PressureAction<NB_ACTUATORS>&& other) noexcept
 {
-  if(sign==Sign::AGONIST)
+    pressures_ = std::move(other.pressures_);
+    return *this;
+}
+
+template <int NB_ACTUATORS>
+void PressureAction<NB_ACTUATORS>::set(int actuator, int value)
+{
+    if (value < 0)
     {
-      set(2*dof,value);
+        value = 0;
     }
-  else
+    if (actuator < 0 || actuator >= NB_ACTUATORS)
     {
-      set(2*dof+1,value);
+        throw std::runtime_error(
+            "pam_interface::PressureAction: invalid actuator index");
+    }
+    pressures_[actuator] = value;
+}
+
+template <int NB_ACTUATORS>
+void PressureAction<NB_ACTUATORS>::set(int dof, Sign sign, int value)
+{
+    if (sign == Sign::AGONIST)
+    {
+        set(2 * dof, value);
+    }
+    else
+    {
+        set(2 * dof + 1, value);
     }
 }
 
-template<int NB_ACTUATORS>
+template <int NB_ACTUATORS>
 int PressureAction<NB_ACTUATORS>::get(int actuator) const
 {
-  if(actuator<0 ||  actuator>=NB_ACTUATORS)
+    if (actuator < 0 || actuator >= NB_ACTUATORS)
     {
-      throw std::runtime_error("pam_interface::PressureAction: invalid actuator index");
+        throw std::runtime_error(
+            "pam_interface::PressureAction: invalid actuator index");
     }
-  return pressures_[actuator];
+    return pressures_[actuator];
 }
 
-template<int NB_ACTUATORS>
+template <int NB_ACTUATORS>
 int PressureAction<NB_ACTUATORS>::get(int dof, Sign sign) const
 {
-  if(sign==Sign::AGONIST)
+    if (sign == Sign::AGONIST)
     {
-      return get(2*dof);
+        return get(2 * dof);
     }
-  else
+    else
     {
-      return get(2*dof+1);
+        return get(2 * dof + 1);
     }
 }
-
-
-

@@ -4,45 +4,43 @@
 
 namespace pam_interface
 {
-
-
-  template<int NB_ACTUATORS>
-  class Command
-  {
-
-  public:
-
+template <int NB_ACTUATORS>
+class Command
+{
+public:
     Command(int id, PressureAction<NB_ACTUATORS> action)
-      : id_(id),action_(action) {}
-    
-    Command(int id)
-      : id_(id) {}
+        : id_(id), action_(action)
+    {
+    }
 
-    Command()
-      : id_(-1) {}
+    Command(int id) : id_(id)
+    {
+    }
+
+    Command() : id_(-1)
+    {
+    }
 
     int get_id() const
     {
-      return id_;
+        return id_;
     }
 
     const PressureAction<NB_ACTUATORS>& get_action() const
     {
-      return action_;
+        return action_;
     }
 
     template <class Archive>
-    void serialize(Archive &archive)
+    void serialize(Archive& archive)
     {
-      archive(id_,action_);
+        archive(id_, action_);
     }
-    
-  private:
 
+private:
     friend shared_memory::private_serialization;
     int id_;
     PressureAction<NB_ACTUATORS> action_;
-    
-  };
+};
 
-}
+}  // namespace pam_interface

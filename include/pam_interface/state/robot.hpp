@@ -1,55 +1,52 @@
 #pragma once
 
-#include "shared_memory/serializer.hpp"
 #include "pam_interface/sign.hpp"
-#include "pam_interface/typedefs.hpp"
 #include "pam_interface/state/joint.hpp"
+#include "pam_interface/typedefs.hpp"
+#include "shared_memory/serializer.hpp"
 
-#include <chrono>
-#include <vector>
 #include <array>
+#include <chrono>
 #include <cstring>
 #include <iostream>
+#include <vector>
 
-namespace pam_interface {
-
-
-  template<int NB_DOFS>
-  class RobotState  {
-
-  public:
-
+namespace pam_interface
+{
+template <int NB_DOFS>
+class RobotState
+{
+public:
     RobotState(int id);
     RobotState(int control_iteration,
-		  int sensor_iteration,
-		  TimePoint time_stamp);
+               int sensor_iteration,
+               TimePoint time_stamp);
     RobotState();
     ~RobotState();
 
-  public:
-
+public:
     /* set the values for the specified joint
      *
      */
     void set_joint(int dof,
-		   int agonist,
-		   int antagonist,
-		   int desired_agonist,
-		   int desired_antagonist,
-		   double position,
-		   double velocity,
-		   int encoder,
-		   bool reference_found);
+                   int agonist,
+                   int antagonist,
+                   int desired_agonist,
+                   int desired_antagonist,
+                   double position,
+                   double velocity,
+                   int encoder,
+                   bool reference_found);
 
     /* returns id of the state.
      * Each new state instance is attributed the id : id of previously
      * instantiated RobotState + 1
-     * except if instantiated by passing an int value, which will 
+     * except if instantiated by passing an int value, which will
      * then be the id
      * @return : state id
      */
     int get_id() const;
-    
+
     /* returns the latest pressure set to the fpga
      * @param dof : degree of freedom
      * @param sign : Sign::AGONIST for agonist, Sign::ANTAGONIST for antagonist
@@ -63,7 +60,6 @@ namespace pam_interface {
      * @return : pressure value
      */
     int get(int dof, Sign sign) const;
-
 
     /* returns whether or not the reference for the specified
      * degree of freedom was found, i.e. the values returned
@@ -104,7 +100,7 @@ namespace pam_interface {
      * @return : the angle velocity value
      * @see : get_reference_found
      */
-    double get_velocity(int dof) const ;
+    double get_velocity(int dof) const;
 
     /* returns the value of the control iteration
      * of the FPGA at the time this instance was created
@@ -122,52 +118,42 @@ namespace pam_interface {
      */
     long int get_time_stamp() const;
 
-    /* 
-     * Print the current and desired pressures 
+    /*
+     * Print the current and desired pressures
      * in the terminal
      */
     void print() const;
-      
-    
+
     const JointState& get_joint_state(int dof) const;
 
-  public:
-
+public:
     // for exchange_manager to be able to serialize a
     // command
-    template<class Archive>
-    void serialize(Archive &archive)
+    template <class Archive>
+    void serialize(Archive& archive)
     {
-      // note: the command_status_, which is used for
-      // monitoring of the execution of the command by a controller,
-      // is excluded
-      archive( joints_,
-	       control_iteration_,
-	       sensor_iteration_,
-	       time_stamp_,
-	       id_ );
+        // note: the command_status_, which is used for
+        // monitoring of the execution of the command by a controller,
+        // is excluded
+        archive(
+            joints_, control_iteration_, sensor_iteration_, time_stamp_, id_);
     }
 
-
-  private:
-
+private:
     void copy(const RobotState<NB_DOFS>& other);
-    
-  private:
 
+private:
     // for shared_memory::serializer to be able to serialize
     // a command into a string (used internally by exchange_manager)
     friend shared_memory::private_serialization;
 
     int id_;
-    std::array<JointState,NB_DOFS> joints_;
+    std::array<JointState, NB_DOFS> joints_;
     int control_iteration_;
     int sensor_iteration_;
     long int time_stamp_;
-    
-  };
+};
 
+#include "robot.hxx"
 
-  #include "robot.hxx"
-  
-}
+}  // namespace pam_interface
