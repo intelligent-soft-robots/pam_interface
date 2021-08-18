@@ -35,6 +35,8 @@ public:
     uint32_t stand_pressure[2];
     uint32_t encoder;
     double encoder_multiplier;
+    double encoder_bias;
+    bool encoder_inverse;
 };
 
 // a robot is a collection of joints, one per dofs

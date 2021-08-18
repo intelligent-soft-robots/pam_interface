@@ -15,6 +15,12 @@ const int STAND_PRESSURES[8] = {
 const double ENCODER_MULTIPLIERS[4] = {
     0.03629032, 0.07258065, 0.07258065, 0.07758621};
 
+const double ENCODER_BIAS[4] = {
+  -0.174, 0.0957, 0.0833, -0.0201};
+
+const bool ENCODER_INVERSE[4] = {
+  true, false, false, false};
+
 const std::string SIGNATURE = NiFpga_interfaceNewRobotallMuscles_Signature;
 const uint32_t ATTRIBUTE = NiFpga_OpenAttribute_NoRun;
 

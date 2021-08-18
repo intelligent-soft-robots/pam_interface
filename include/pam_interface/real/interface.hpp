@@ -182,19 +182,15 @@ public:
 
     double encoder_to_angle(int dof, int encoder)
     {
-        double value =
+      double value =
             (encoder * nifpga_robot_->joints[dof].encoder_multiplier) *
             0.0174533;
-        if (dof == 0)
-        {
-            value = 3.14159265359 - value;
-        }
-        if (dof == 3)
-        {
-            value -= (3.14159265359 / 2.0);
-            value = -value;
-        }
-        return value;
+      value += nifpga_robot_->joints[dof].encoder_bias;
+      if (nifpga_robot_->joints[dof].encoder_inverse)
+	{
+	  return 3.14159265359 - value;
+	}
+      return value;
     }
 
     void terminate()

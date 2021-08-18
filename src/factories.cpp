@@ -29,6 +29,8 @@ static void construct_robot(NiFpgaRobot &robot)
         robot.joints[dof].reference_found = REFERENCE_FOUNDS[dof];
         robot.joints[dof].encoder = ENCODERS[dof];
         robot.joints[dof].encoder_multiplier = ENCODER_MULTIPLIERS[dof];
+        robot.joints[dof].encoder_bias = ENCODER_BIAS[dof];
+        robot.joints[dof].encoder_inverse = ENCODER_INVERSE[dof];
     }
 
     int stand_pressure_index = 0;
