@@ -42,6 +42,7 @@ if (EXISTS "/opt/mpi-is")
   install(FILES
     "${BITFILE_PATH}/pam_robot.lvbitx"
     "${JSON_CONFIG_DIR}/pam.json"
+    "${JSON_CONFIG_DIR}/pam_sim.json"
     DESTINATION /opt/mpi-is/pam_interface/)
   set(JSON_DEFAULT_CONFIG_FILE "/opt/mpi-is/pam_interface/pam.json")
   set(PAM_BITFILE "/opt/mpi-is/pam_interface/pam_robot.lvbitx")
