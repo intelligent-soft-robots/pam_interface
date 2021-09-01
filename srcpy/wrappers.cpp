@@ -19,7 +19,7 @@ typedef pam_interface::RobotState<NB_DOFS> RobotState;
 typedef pam_interface::RealRobotDriver<NB_DOFS> RealDriver;
 typedef pam_interface::DummyRobotDriver<NB_DOFS> DummyDriver;
 
-PYBIND11_MODULE(pam_interface, m)
+PYBIND11_MODULE(pam_interface_wrp, m)
 {
     pybind11::class_<Config>(m, "Configuration")
         .def(pybind11::init<>())
