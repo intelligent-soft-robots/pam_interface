@@ -190,6 +190,10 @@ public:
 	{
 	  return 3.14159265359 - value;
 	}
+      if (nifpga_robot_->joints[dof].encoder_negative)
+	{
+	  return -value;
+	}
       return value;
     }
 

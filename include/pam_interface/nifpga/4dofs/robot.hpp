@@ -21,6 +21,9 @@ const double ENCODER_BIAS[4] = {
 const bool ENCODER_INVERSE[4] = {
   true, false, false, false};
 
+const bool ENCODER_NEGATIVE[4] = {
+  false, false, false, true};
+
 const std::string SIGNATURE = NiFpga_interfaceNewRobotallMuscles_Signature;
 const uint32_t ATTRIBUTE = NiFpga_OpenAttribute_NoRun;
 

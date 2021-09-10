@@ -37,6 +37,7 @@ public:
     double encoder_multiplier;
     double encoder_bias;
     bool encoder_inverse;
+    bool encoder_negative;
 };
 
 // a robot is a collection of joints, one per dofs
