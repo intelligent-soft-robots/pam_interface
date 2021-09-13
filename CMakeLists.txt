@@ -129,6 +129,10 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_server
                ${CMAKE_INSTALL_PREFIX}/bin/pam_server
                COPYONLY)
 
+# moving pam_reset to bin folder
+configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_reset
+               ${CMAKE_INSTALL_PREFIX}/bin/pam_reset
+               COPYONLY)
 	     
 ###################
 # Python wrappers #
