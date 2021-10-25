@@ -118,6 +118,10 @@ public:
         check_status("opening fpga", status);
         std::cout << "-- done" << std::endl;
 
+	/*std::cout << "resetting fpga" << std::endl;
+	NiFpga_Reset(nifpga_robot_->session);
+        check_status("calling reset function", status);
+        std::cout << "-- done" << std::endl;*/
         std::cout << "calling run function" << std::endl;
         status = NiFpga_Run(nifpga_robot_->session, 0);
         check_status("calling run function", status);
@@ -172,6 +176,7 @@ public:
         std::cout << "starting control loops" << std::endl;
         set_control_loops(0);
         std::cout << "-- done" << std::endl;
+
     }
 
     Microseconds time_diff(int delta_sensor_iteration)
@@ -206,6 +211,8 @@ public:
         std::cout << "\nremoving pressure\n";
         set_control_loops(1);
         usleep(0.1 * 1000 * 1000);
+	std::cout << "resetting fpga\n";
+	NiFpga_Reset(nifpga_robot_->session);
         std::cout << "closing fpga\n";
         NiFpga_Close(nifpga_robot_->session, 0);
         usleep(0.1 * 1000 * 1000);
