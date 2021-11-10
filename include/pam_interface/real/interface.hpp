@@ -118,8 +118,8 @@ public:
         check_status("opening fpga", status);
         std::cout << "-- done" << std::endl;
 
-	/*std::cout << "resetting fpga" << std::endl;
-	NiFpga_Reset(nifpga_robot_->session);
+        /*std::cout << "resetting fpga" << std::endl;
+        NiFpga_Reset(nifpga_robot_->session);
         check_status("calling reset function", status);
         std::cout << "-- done" << std::endl;*/
         std::cout << "calling run function" << std::endl;
@@ -176,7 +176,6 @@ public:
         std::cout << "starting control loops" << std::endl;
         set_control_loops(0);
         std::cout << "-- done" << std::endl;
-
     }
 
     Microseconds time_diff(int delta_sensor_iteration)
@@ -187,19 +186,19 @@ public:
 
     double encoder_to_angle(int dof, int encoder)
     {
-      double value =
+        double value =
             (encoder * nifpga_robot_->joints[dof].encoder_multiplier) *
             0.0174533;
-      value += nifpga_robot_->joints[dof].encoder_bias;
-      if (nifpga_robot_->joints[dof].encoder_inverse)
-	{
-	  return 3.14159265359 - value;
-	}
-      if (nifpga_robot_->joints[dof].encoder_negative)
-	{
-	  return -value;
-	}
-      return value;
+        value += nifpga_robot_->joints[dof].encoder_bias;
+        if (nifpga_robot_->joints[dof].encoder_inverse)
+        {
+            return 3.14159265359 - value;
+        }
+        if (nifpga_robot_->joints[dof].encoder_negative)
+        {
+            return -value;
+        }
+        return value;
     }
 
     void terminate()
@@ -211,8 +210,8 @@ public:
         std::cout << "\nremoving pressure\n";
         set_control_loops(1);
         usleep(0.1 * 1000 * 1000);
-	std::cout << "resetting fpga\n";
-	NiFpga_Reset(nifpga_robot_->session);
+        std::cout << "resetting fpga\n";
+        NiFpga_Reset(nifpga_robot_->session);
         std::cout << "closing fpga\n";
         NiFpga_Close(nifpga_robot_->session, 0);
         usleep(0.1 * 1000 * 1000);

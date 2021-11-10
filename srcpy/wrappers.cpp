@@ -66,21 +66,24 @@ PYBIND11_MODULE(pam_interface, m)
         .value("agonist", pam_interface::Sign::AGONIST)
         .value("antagonist", pam_interface::Sign::ANTAGONIST);
 
-    m.def("signs", []() {
-        std::array<pam_interface::Sign, 2> a = {
-            pam_interface::Sign::AGONIST, pam_interface::Sign::ANTAGONIST};
-        return a;
-    });
+    m.def("signs",
+          []()
+          {
+              std::array<pam_interface::Sign, 2> a = {
+                  pam_interface::Sign::AGONIST,
+                  pam_interface::Sign::ANTAGONIST};
+              return a;
+          });
 
     pybind11::class_<PressureAction>(m, "PressureAction")
         .def(pybind11::init<>())
-        .def("get", (int (PressureAction::*)(int) const) & PressureAction::get)
+        .def("get", (int(PressureAction::*)(int) const) & PressureAction::get)
         .def("get",
-             (int (PressureAction::*)(int, pam_interface::Sign) const) &
+             (int(PressureAction::*)(int, pam_interface::Sign) const) &
                  PressureAction::get)
-        .def("set", (void (PressureAction::*)(int, int)) & PressureAction::set)
+        .def("set", (void(PressureAction::*)(int, int)) & PressureAction::set)
         .def("set",
-             (void (PressureAction::*)(int, pam_interface::Sign, int)) &
+             (void(PressureAction::*)(int, pam_interface::Sign, int)) &
                  PressureAction::set);
 
     pybind11::class_<Command>(m, "Command")
@@ -93,7 +96,8 @@ PYBIND11_MODULE(pam_interface, m)
     m.def("write_command",
           [](const std::string& segment_id,
              std::array<int, NB_DOFS> agos,
-             std::array<int, NB_DOFS> antagos) {
+             std::array<int, NB_DOFS> antagos)
+          {
               static int id = 0;
               PressureAction action;
               for (int dof = 0; dof < NB_DOFS; dof++)
@@ -107,30 +111,35 @@ PYBIND11_MODULE(pam_interface, m)
               shared_memory::serialize(segment_id, "command", command);
           });
 
-    m.def("read_command", [](const std::string& segment_id) {
-        Command command;
-        shared_memory::deserialize(segment_id, "command", command);
-        return command;
-    });
-
-    m.def("write_robot_state",
-          [](const std::string& segment_id, const RobotState& state) {
-              shared_memory::serialize(segment_id, "state", state);
+    m.def("read_command",
+          [](const std::string& segment_id)
+          {
+              Command command;
+              shared_memory::deserialize(segment_id, "command", command);
+              return command;
           });
 
-    m.def("read_robot_state", [](const std::string& segment_id) {
-        RobotState state;
-        shared_memory::deserialize(segment_id, "state", state);
-        return state;
-    });
+    m.def("write_robot_state",
+          [](const std::string& segment_id, const RobotState& state)
+          { shared_memory::serialize(segment_id, "state", state); });
 
-    m.def("init", [](const std::string& segment_id) {
-        shared_memory::clear_shared_memory(segment_id);
-        Command command(-1);
-        shared_memory::serialize(segment_id, "command", command);
-        RobotState state;
-        shared_memory::serialize(segment_id, "state", state);
-    });
+    m.def("read_robot_state",
+          [](const std::string& segment_id)
+          {
+              RobotState state;
+              shared_memory::deserialize(segment_id, "state", state);
+              return state;
+          });
+
+    m.def("init",
+          [](const std::string& segment_id)
+          {
+              shared_memory::clear_shared_memory(segment_id);
+              Command command(-1);
+              shared_memory::serialize(segment_id, "command", command);
+              RobotState state;
+              shared_memory::serialize(segment_id, "state", state);
+          });
 
     pybind11::class_<RealDriver>(m, "RealRobot")
         .def(pybind11::init<const Config>())
