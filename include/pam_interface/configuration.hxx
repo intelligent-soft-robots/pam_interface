@@ -99,7 +99,7 @@ T json_get(std::string file_path, std::string key, json_helper::Jsonhelper &jh)
         std::stringstream ss;
         ss << "Failed to read key " << key << " from " << file_path << "\n";
         std::string error = ss.str();
-        throw error;
+        throw std::runtime_error(error);
     }
 }
 
@@ -117,7 +117,7 @@ JsonConfiguration<NB_DOFS>::JsonConfiguration(const std::string &file_path)
         std::stringstream ss;
         ss << "Failed to read JSON file " << file_path << "\n";
         std::string error = ss.str();
-        throw error;
+        throw std::runtime_error(error);
     }
 
     int nb_dofs = jh.j["nb_dofs"].get<int>();
@@ -163,7 +163,7 @@ JsonConfiguration<NB_DOFS>::JsonConfiguration(const std::string &file_path)
             ss << "Failed to read key " << items[i] << " from " << file_path
                << "\n";
             std::string error = ss.str();
-            throw error;
+            throw std::runtime_error(error);
         }
     }
 }
