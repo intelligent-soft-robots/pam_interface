@@ -1,22 +1,25 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "pam_interface/command.hpp"
-#include "pam_interface/configuration.hpp"
 #include "pam_interface/dummy/driver.hpp"
 #include "pam_interface/pressure_action.hpp"
-#include "pam_interface/real/driver.hpp"
+#include "pam_interface/real/pamy1/configuration.hpp"
+#include "pam_interface/real/pamy1/driver.hpp"
+#include "pam_interface/real/pamy2/configuration.hpp"
 #include "pam_interface/sign.hpp"
 #include "pam_interface/state/robot.hpp"
+#include "shared_memory/shared_memory.hpp"
 
 #define NB_DOFS 4
 
 typedef pam_interface::Configuration<NB_DOFS> Config;
 typedef pam_interface::JsonConfiguration<NB_DOFS> JsonConfig;
-typedef pam_interface::DefaultConfiguration<NB_DOFS> DefaultConfig;
+typedef pam_interface::Pamy1DefaultConfiguration<NB_DOFS> Pamy1DefaultConfig;
+typedef pam_interface::Pamy2DefaultConfiguration Pamy2DefaultConfig;
 typedef pam_interface::PressureAction<2 * NB_DOFS> PressureAction;
 typedef pam_interface::Command<2 * NB_DOFS> Command;
 typedef pam_interface::RobotState<NB_DOFS> RobotState;
-typedef pam_interface::RealRobotDriver<NB_DOFS> RealDriver;
+typedef pam_interface::Pamy1Driver<NB_DOFS> Pamy1Driver;
 typedef pam_interface::DummyRobotDriver<NB_DOFS> DummyDriver;
 
 PYBIND11_MODULE(pam_interface, m)
@@ -43,10 +46,17 @@ PYBIND11_MODULE(pam_interface, m)
         .def(pybind11::init<const std::string&>())
         .def("display", &JsonConfig::print);
 
-    pybind11::class_<DefaultConfig, JsonConfig>(m, "DefaultConfiguration")
+    pybind11::class_<Pamy1DefaultConfig, JsonConfig>(
+        m, "Pamy1DefaultConfiguration")
         .def(pybind11::init<>())
-        .def("display", &DefaultConfig::print)
-        .def("get_path", &DefaultConfig::get_default_configuration_path);
+        .def("display", &Pamy1DefaultConfig::print)
+        .def("get_path", &Pamy1DefaultConfig::get_default_configuration_path);
+
+    pybind11::class_<Pamy2DefaultConfig, JsonConfig>(
+        m, "Pamy2DefaultConfiguration")
+        .def(pybind11::init<>())
+        .def("display", &Pamy2DefaultConfig::print)
+        .def("get_path", &Pamy2DefaultConfig::get_default_configuration_path);
 
     pybind11::class_<RobotState>(m, "RobotState")
         .def(pybind11::init<>())
@@ -66,24 +76,21 @@ PYBIND11_MODULE(pam_interface, m)
         .value("agonist", pam_interface::Sign::AGONIST)
         .value("antagonist", pam_interface::Sign::ANTAGONIST);
 
-    m.def("signs",
-          []()
-          {
-              std::array<pam_interface::Sign, 2> a = {
-                  pam_interface::Sign::AGONIST,
-                  pam_interface::Sign::ANTAGONIST};
-              return a;
-          });
+    m.def("signs", []() {
+        std::array<pam_interface::Sign, 2> a = {
+            pam_interface::Sign::AGONIST, pam_interface::Sign::ANTAGONIST};
+        return a;
+    });
 
     pybind11::class_<PressureAction>(m, "PressureAction")
         .def(pybind11::init<>())
-        .def("get", (int(PressureAction::*)(int) const) & PressureAction::get)
+        .def("get", (int (PressureAction::*)(int) const) & PressureAction::get)
         .def("get",
-             (int(PressureAction::*)(int, pam_interface::Sign) const) &
+             (int (PressureAction::*)(int, pam_interface::Sign) const) &
                  PressureAction::get)
-        .def("set", (void(PressureAction::*)(int, int)) & PressureAction::set)
+        .def("set", (void (PressureAction::*)(int, int)) & PressureAction::set)
         .def("set",
-             (void(PressureAction::*)(int, pam_interface::Sign, int)) &
+             (void (PressureAction::*)(int, pam_interface::Sign, int)) &
                  PressureAction::set);
 
     pybind11::class_<Command>(m, "Command")
@@ -96,8 +103,7 @@ PYBIND11_MODULE(pam_interface, m)
     m.def("write_command",
           [](const std::string& segment_id,
              std::array<int, NB_DOFS> agos,
-             std::array<int, NB_DOFS> antagos)
-          {
+             std::array<int, NB_DOFS> antagos) {
               static int id = 0;
               PressureAction action;
               for (int dof = 0; dof < NB_DOFS; dof++)
@@ -111,40 +117,35 @@ PYBIND11_MODULE(pam_interface, m)
               shared_memory::serialize(segment_id, "command", command);
           });
 
-    m.def("read_command",
-          [](const std::string& segment_id)
-          {
-              Command command;
-              shared_memory::deserialize(segment_id, "command", command);
-              return command;
-          });
+    m.def("read_command", [](const std::string& segment_id) {
+        Command command;
+        shared_memory::deserialize(segment_id, "command", command);
+        return command;
+    });
 
     m.def("write_robot_state",
-          [](const std::string& segment_id, const RobotState& state)
-          { shared_memory::serialize(segment_id, "state", state); });
-
-    m.def("read_robot_state",
-          [](const std::string& segment_id)
-          {
-              RobotState state;
-              shared_memory::deserialize(segment_id, "state", state);
-              return state;
-          });
-
-    m.def("init",
-          [](const std::string& segment_id)
-          {
-              shared_memory::clear_shared_memory(segment_id);
-              Command command(-1);
-              shared_memory::serialize(segment_id, "command", command);
-              RobotState state;
+          [](const std::string& segment_id, const RobotState& state) {
               shared_memory::serialize(segment_id, "state", state);
           });
 
-    pybind11::class_<RealDriver>(m, "RealRobot")
+    m.def("read_robot_state", [](const std::string& segment_id) {
+        RobotState state;
+        shared_memory::deserialize(segment_id, "state", state);
+        return state;
+    });
+
+    m.def("init", [](const std::string& segment_id) {
+        shared_memory::clear_shared_memory(segment_id);
+        Command command(-1);
+        shared_memory::serialize(segment_id, "command", command);
+        RobotState state;
+        shared_memory::serialize(segment_id, "state", state);
+    });
+
+    pybind11::class_<Pamy1Driver>(m, "Pamy1Robot")
         .def(pybind11::init<const Config>())
-        .def("pressure_in", &RealDriver::in)
-        .def("data_out", &RealDriver::out);
+        .def("pressure_in", &Pamy1Driver::in)
+        .def("data_out", &Pamy1Driver::out);
 
     pybind11::class_<DummyDriver>(m, "DummyRobot")
         .def(pybind11::init<const Config>())

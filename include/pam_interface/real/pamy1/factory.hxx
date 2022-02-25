@@ -9,7 +9,7 @@ std::shared_ptr<Interface<NB_DOFS>> get_interface(
 
     // see pam_interface/real/interface.hpp
     interface_4dofs_g =
-        std::make_shared<pam_interface::RealRobotInterface<NB_DOFS>>(config);
+        std::make_shared<pam_interface::Pamy1Interface<NB_DOFS>>(config);
 
     return interface_4dofs_g;
 }

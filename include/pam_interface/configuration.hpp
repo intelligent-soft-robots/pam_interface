@@ -1,13 +1,11 @@
 #pragma once
 
+#include <filesystem>
 #include <iostream>
 #include <limits>
 #include <string>
 #include <vector>
-#include "shared_memory/shared_memory.hpp"
-
 #include "json_helper/json_helper.hpp"
-
 #include "pam_interface/sign.hpp"
 
 namespace pam_interface
@@ -53,14 +51,6 @@ class JsonConfiguration : public Configuration<NB_DOFS>
 {
 public:
     JsonConfiguration(const std::string &file_path);
-};
-
-template <int NB_DOFS>
-class DefaultConfiguration : public JsonConfiguration<NB_DOFS>
-{
-public:
-    DefaultConfiguration();
-    static std::string get_default_configuration_path();
 };
 
 #include "configuration.hxx"

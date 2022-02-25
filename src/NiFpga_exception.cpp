@@ -1,4 +1,4 @@
-#include "pam_interface/nifpga/NiFpga_exception.hpp"
+#include "pam_interface/real/pamy1/nifpga/NiFpga_exception.hpp"
 
 namespace pam_interface
 {
