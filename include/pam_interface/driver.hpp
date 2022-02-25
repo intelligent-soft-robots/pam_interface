@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pam_interface/pressure_action.hpp"
-#include "pam_interface/real/factory.hpp"
+#include "pam_interface/real/pamy1/factory.hpp"
 #include "pam_interface/state/robot.hpp"
 
 #include <memory>

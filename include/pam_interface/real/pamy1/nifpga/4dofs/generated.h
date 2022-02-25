@@ -9,7 +9,7 @@
 #define NiFpga_Version 1400
 #endif
 
-#include "pam_interface/nifpga/NiFpga.h"
+#include "pam_interface/real/pamy1/nifpga/NiFpga.h"
 
 /**
  * The filename of the FPGA bitfile.

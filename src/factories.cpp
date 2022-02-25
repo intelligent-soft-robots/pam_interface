@@ -1,6 +1,6 @@
-#include "pam_interface/nifpga/4dofs/robot.hpp"
-#include "pam_interface/nifpga/factory.hpp"
-#include "pam_interface/nifpga/robot.hpp"
+#include "pam_interface/real/pamy1/nifpga/4dofs/robot.hpp"
+#include "pam_interface/real/pamy1/nifpga/factory.hpp"
+#include "pam_interface/real/pamy1/nifpga/robot.hpp"
 
 namespace pam_interface
 {

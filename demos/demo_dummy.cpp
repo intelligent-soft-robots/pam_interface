@@ -1,10 +1,11 @@
 #include "pam_interface/dummy/driver.hpp"
+#include "pam_interface/real/pamy1/configuration.hpp"
 #include "pam_interface/sign.hpp"
 
 void run()
 {
     // configuration for this robot instance
-    pam_interface::DefaultConfiguration<4> configuration;
+    pam_interface::Pamy1DefaultConfiguration<4> configuration;
 
     pam_interface::DummyRobotDriver<4> robot(configuration);
 

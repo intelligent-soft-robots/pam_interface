@@ -1,4 +1,7 @@
 
+
+#define UNUSED(x) (void)(x)
+
 template <int NB_DOFS>
 DummyInterface<NB_DOFS>::DummyInterface(
     const Configuration<NB_DOFS>& configuration)
@@ -14,6 +17,7 @@ DummyInterface<NB_DOFS>::DummyInterface(
 template <int NB_DOFS>
 bool DummyInterface<NB_DOFS>::is_reference_found(int dof)
 {
+    UNUSED(dof);
     return true;
 }
 
@@ -32,6 +36,7 @@ Microseconds DummyInterface<NB_DOFS>::time_diff(int delta_sensor_iteration)
 template <int NB_DOFS>
 double DummyInterface<NB_DOFS>::encoder_to_angle(int dof, int encoder)
 {
+    UNUSED(dof);
     return static_cast<double>(encoder) * 0.07258065;
 }
 
@@ -45,13 +50,6 @@ template <int NB_DOFS>
 std::chrono::microseconds DummyInterface<NB_DOFS>::get_sensor_period()
 {
     return configuration_.sensor_period;
-}
-
-static int clip(int min, int max, int v)
-{
-    if (v < min) return min;
-    if (v > max) return max;
-    return v;
 }
 
 template <int NB_DOFS>
@@ -90,6 +88,7 @@ int DummyInterface<NB_DOFS>::read_pressure(int dof, Sign sign)
 template <int NB_DOFS>
 int DummyInterface<NB_DOFS>::read_encoder(int dof)
 {
+    UNUSED(dof);
     double angle = read_angle(dof);
     return static_cast<int>(angle / 0.07258065 + 0.5);
 }
