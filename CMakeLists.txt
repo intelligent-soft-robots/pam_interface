@@ -35,26 +35,41 @@ set(all_target_exports)
 # and install/pam_interface/opt/mpi-is/
 # (for being included in any debian created from the
 # install folder)
-get_filename_component(BITFILE_PATH bitfile ABSOLUTE)
-get_filename_component(JSON_CONFIG_DIR config ABSOLUTE)
+
+#
+# PAMY 1
+#
+get_filename_component(BITFILE_PATH pamy1/bitfile ABSOLUTE)
+get_filename_component(PAMY1_JSON_CONFIG_DIR pamy1/config ABSOLUTE)
+get_filename_component(PAMY2_JSON_CONFIG_DIR pamy2/config ABSOLUTE)
 # installing files in /opt/mpi-is/ if exists
 if (EXISTS "/opt/mpi-is")
   install(FILES
     "${BITFILE_PATH}/pam_robot.lvbitx"
-    "${JSON_CONFIG_DIR}/pam.json"
-    "${JSON_CONFIG_DIR}/pam_sim.json"
-    DESTINATION /opt/mpi-is/pam_interface/)
-  set(JSON_DEFAULT_CONFIG_FILE "/opt/mpi-is/pam_interface/pam.json")
-  set(PAM_BITFILE "/opt/mpi-is/pam_interface/pam_robot.lvbitx")
+    "${PAMY1_JSON_CONFIG_DIR}/pam.json"
+    "${PAMY1_JSON_CONFIG_DIR}/pam_sim.json"
+    DESTINATION /opt/mpi-is/pam_interface/pamy1)
+  install(FILES
+    "${PAMY2_JSON_CONFIG_DIR}/pam.json"
+    DESTINATION /opt/mpi-is/pam_interface/pamy2)
+  set(PAMY1_JSON_DEFAULT_CONFIG_FILE "/opt/mpi-is/pam_interface/pamy1/pam.json")
+  set(PAMY2_JSON_DEFAULT_CONFIG_FILE "/opt/mpi-is/pam_interface/pamy2/pam.json")
+  set(PAM_BITFILE "/opt/mpi-is/pam_interface/pamy1/pam_robot.lvbitx")
 else()
-  set(JSON_DEFAULT_CONFIG_FILE "${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pam.json")
-  set(PAM_BITFILE "${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pam_robot.lvbitx")
+  set(PAMY1_JSON_DEFAULT_CONFIG_FILE "${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pamy1/pam.json")
+  set(PAMY2_JSON_DEFAULT_CONFIG_FILE "${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pamy2/pam.json")
+  set(PAM_BITFILE "${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pamy1/pam_robot.lvbitx")
 endif()
 # also installing in the workspace/install folder  
 install(FILES
   "${BITFILE_PATH}/pam_robot.lvbitx"
-  "${JSON_CONFIG_DIR}/pam.json"
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/)
+  "${PAMY1_JSON_CONFIG_DIR}/pam.json"
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pamy1)
+install(FILES
+  "${PAMY2_JSON_CONFIG_DIR}/pam.json"
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/opt/mpi-is/pam_interface/pamy2)
+
+
 
 
 ###########
@@ -67,7 +82,15 @@ add_library( ${PROJECT_NAME} SHARED
   src/NiFpga_exception.cpp
   src/NiFpga_robot.cpp
   src/typedefs.cpp
-  src/factories.cpp )
+  src/factories.cpp
+  src/interface.cpp
+  src/udp_communication.cpp
+  src/pamy2_interface.cpp
+  src/pamy2_driver.cpp
+  src/pamy2_configuration.cpp
+  src/robot.cpp
+  src/sign.cpp
+  src/rotation.cpp)
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -79,7 +102,8 @@ target_link_libraries(${PROJECT_NAME} json_helper::json_helper)
 target_link_libraries(${PROJECT_NAME} ${CMAKE_DL_LIBS})
 ament_export_interfaces(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 target_compile_definitions(pam_interface PRIVATE
-  PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
+  PAMY1_DEFAULT_CONFIG_FILE_PATH="${PAMY1_JSON_DEFAULT_CONFIG_FILE}"
+  PAMY2_DEFAULT_CONFIG_FILE_PATH="${PAMY2_JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 
 list(APPEND all_targets ${PROJECT_NAME})
@@ -94,7 +118,8 @@ add_executable(pam_interface_demo_dummy
   demos/demo_dummy.cpp)
 target_link_libraries(pam_interface_demo_dummy pam_interface)
 target_compile_definitions(pam_interface_demo_dummy PRIVATE
-  PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
+  PAMY1_DEFAULT_CONFIG_FILE_PATH="${PAMY1_JSON_DEFAULT_CONFIG_FILE}"
+  PAMY2_DEFAULT_CONFIG_FILE_PATH="${PAMY2_JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 list(APPEND all_targets pam_interface_demo_dummy)
 
@@ -102,7 +127,8 @@ add_executable(pam_interface_demo_real
   demos/demo_real.cpp)
 target_link_libraries(pam_interface_demo_real pam_interface)
 target_compile_definitions(pam_interface_demo_real PRIVATE
-  PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
+  PAMY1_DEFAULT_CONFIG_FILE_PATH="${PAMY1_JSON_DEFAULT_CONFIG_FILE}"
+  PAMY2_DEFAULT_CONFIG_FILE_PATH="${PAMY2_JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 list(APPEND all_targets pam_interface_demo_real)
 
@@ -110,9 +136,18 @@ add_executable(pam_interface_demo_serialize_robot_state
   demos/serialize_robot_state.cpp)
 target_link_libraries(pam_interface_demo_serialize_robot_state pam_interface)
 target_compile_definitions(pam_interface_demo_serialize_robot_state PRIVATE
-  PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
+  PAMY1_DEFAULT_CONFIG_FILE_PATH="${PAMY1_JSON_DEFAULT_CONFIG_FILE}"
+  PAMY2_DEFAULT_CONFIG_FILE_PATH="${PAMY2_JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 list(APPEND all_targets pam_interface_demo_serialize_robot_state)
+
+add_executable(pam_interface_demo_pamy2_udp_communication
+  demos/pamy2_udp_communication.cpp)
+target_link_libraries(pam_interface_demo_pamy2_udp_communication pam_interface)
+target_compile_definitions(pam_interface_demo_pamy2_udp_communication PRIVATE
+  PAMY1_DEFAULT_CONFIG_FILE_PATH="${PAMY1_JSON_DEFAULT_CONFIG_FILE}"
+  PAMY2_DEFAULT_CONFIG_FILE_PATH="${PAMY2_JSON_DEFAULT_CONFIG_FILE}")
+list(APPEND all_targets pam_interface_demo_pamy2_udp_communication)
 
 
 ###############
@@ -125,13 +160,13 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_check
                COPYONLY)
 
 # moving pam_server to bin folder
-configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_server
-               ${CMAKE_INSTALL_PREFIX}/bin/pam_server
+configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pamy1_server
+               ${CMAKE_INSTALL_PREFIX}/bin/pamy1_server
                COPYONLY)
 
 # moving pam_reset to bin folder
-configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pam_reset
-               ${CMAKE_INSTALL_PREFIX}/bin/pam_reset
+configure_file(${CMAKE_CURRENT_LIST_DIR}/bin/pamy1_reset
+               ${CMAKE_INSTALL_PREFIX}/bin/pamy1_reset
                COPYONLY)
 	     
 ###################
@@ -151,7 +186,8 @@ target_include_directories(
          $<INSTALL_INTERFACE:include> SYSTEM
 	 PUBLIC ${PYTHON_INCLUDE_DIRS})
 target_compile_definitions(${PROJECT_NAME}_py PRIVATE
-  PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
+  PAMY1_DEFAULT_CONFIG_FILE_PATH="${PAMY1_JSON_DEFAULT_CONFIG_FILE}"
+  PAMY2_DEFAULT_CONFIG_FILE_PATH="${PAMY2_JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 _ament_cmake_python_get_python_install_dir()
 install(TARGETS ${PROJECT_NAME}_py DESTINATION ${PYTHON_INSTALL_DIR})
@@ -182,7 +218,8 @@ if(BUILD_TESTING)
   ament_add_gtest(test_${PROJECT_NAME}_cpp tests/main.cpp tests/unit_tests.cpp)
   target_link_libraries(test_${PROJECT_NAME}_cpp ${PROJECT_NAME})
   target_compile_definitions(test_${PROJECT_NAME}_cpp PRIVATE
-  PAM_DEFAULT_CONFIG_FILE_PATH="${JSON_DEFAULT_CONFIG_FILE}"
+  PAMY1_DEFAULT_CONFIG_FILE_PATH="${PAMY1_JSON_DEFAULT_CONFIG_FILE}"
+  PAMY2_DEFAULT_CONFIG_FILE_PATH="${PAMY2_JSON_DEFAULT_CONFIG_FILE}"
   BITFILE_4DOFS_FILE_PATH="${PAM_BITFILE}")
 endif()
 
