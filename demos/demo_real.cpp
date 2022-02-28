@@ -1,12 +1,13 @@
-#include "pam_interface/real/driver.hpp"
+#include "pam_interface/real/pamy1/configuration.hpp"
+#include "pam_interface/real/pamy1/driver.hpp"
 #include "pam_interface/sign.hpp"
 
 void run()
 {
     // configuration for this robot instance
-    pam_interface::DefaultConfiguration<4> configuration;
+    pam_interface::Pamy1DefaultConfiguration<4> configuration;
 
-    pam_interface::RealRobotDriver<4> robot(configuration);
+    pam_interface::Pamy1Driver<4> robot(configuration);
 
     // PressureAction is of size 2*dofs, because 2 muscles per dof
     pam_interface::PressureAction<8> action;

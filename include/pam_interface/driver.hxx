@@ -28,6 +28,7 @@ void Driver<NB_DOFS>::in(const PressureAction<2 * NB_DOFS>& pressure_action)
             hw_interface_->set_pressure(dof, Sign::ANTAGONIST, pressure);
         }
     }
+    hw_interface_->finalize_iteration();
 }
 
 template <int NB_DOFS>

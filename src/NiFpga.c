@@ -6,7 +6,7 @@
  * All rights reserved.
  */
 
-#include "pam_interface/nifpga/NiFpga.h"
+#include "pam_interface/real/pamy1/nifpga/NiFpga.h"
 
 /*
  * Platform specific includes.

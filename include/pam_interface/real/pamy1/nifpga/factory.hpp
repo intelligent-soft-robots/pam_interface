@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "pam_interface/nifpga/robot.hpp"
+#include "pam_interface/real/pamy1/nifpga/robot.hpp"
 
 namespace pam_interface
 {
 namespace four_dofs
 {
-#include "pam_interface/nifpga/4dofs/robot.hpp"
+#include "pam_interface/real/pamy1/nifpga/4dofs/robot.hpp"
 
 int get_nb_dofs();
 static NiFpgaRobot _ROBOT;

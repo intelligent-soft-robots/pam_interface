@@ -1,6 +1,6 @@
 
 template <int NB_DOFS>
-RealRobotDriver<NB_DOFS>::RealRobotDriver(const Configuration<NB_DOFS>& config)
+Pamy1Driver<NB_DOFS>::Pamy1Driver(const Configuration<NB_DOFS>& config)
     : Driver<NB_DOFS>(config)
 {
     if (NB_DOFS != 4)

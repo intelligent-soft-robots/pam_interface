@@ -4,7 +4,7 @@
 #pragma once
 
 #include <memory>
-#include "pam_interface/real/interface.hpp"
+#include "pam_interface/real/pamy1/interface.hpp"
 
 namespace pam_interface
 {

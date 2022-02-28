@@ -107,6 +107,12 @@ template <int NB_DOFS>
 JsonConfiguration<NB_DOFS>::JsonConfiguration(const std::string &file_path)
     : Configuration<NB_DOFS>()
 {
+    if (!std::filesystem::exists(file_path))
+    {
+        throw std::runtime_error(
+            std::string("failed to find configuration file: ") + file_path);
+    }
+
     json_helper::Jsonhelper jh;
     try
     {
@@ -166,16 +172,4 @@ JsonConfiguration<NB_DOFS>::JsonConfiguration(const std::string &file_path)
             throw std::runtime_error(error);
         }
     }
-}
-
-template <int NB_DOFS>
-DefaultConfiguration<NB_DOFS>::DefaultConfiguration()
-    : JsonConfiguration<NB_DOFS>(PAM_DEFAULT_CONFIG_FILE_PATH)
-{
-}
-
-template <int NB_DOFS>
-std::string DefaultConfiguration<NB_DOFS>::get_default_configuration_path()
-{
-    return std::string(PAM_DEFAULT_CONFIG_FILE_PATH);
 }

@@ -1,4 +1,5 @@
 
+
 template <int NB_DOFS>
 Interface<NB_DOFS>::Interface() : previous_state_(-1)
 {

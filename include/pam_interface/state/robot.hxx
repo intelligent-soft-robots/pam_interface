@@ -1,15 +1,5 @@
 
 
-namespace internal
-{
-int next_id()
-{
-    static int id = 0;
-    id++;
-    return id;
-}
-}  // namespace internal
-
 template <int NB_DOFS>
 RobotState<NB_DOFS>::RobotState(int control_iteration,
                                 int sensor_iteration,

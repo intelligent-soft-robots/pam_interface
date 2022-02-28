@@ -13,6 +13,11 @@
 
 namespace pam_interface
 {
+namespace internal
+{
+int next_id();
+}
+
 template <int NB_DOFS>
 class RobotState
 {

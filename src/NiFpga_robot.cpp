@@ -1,4 +1,4 @@
-#include "pam_interface/nifpga/robot.hpp"
+#include "pam_interface/real/pamy1/nifpga/robot.hpp"
 
 // note : BITFILE_4DOFS_FILE_PATH replaced by absolute path to the file in
 // CMakeLists.txt
