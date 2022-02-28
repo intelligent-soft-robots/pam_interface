@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include "pam_interface/sign.hpp"
 
 namespace pam_interface
@@ -15,13 +16,13 @@ typedef struct
 
 typedef struct
 {
-    unsigned short counter = 0;  // counter
-    unsigned short connection =
-        0;  // close connection if 0 // same as emergency stop ?
-    unsigned short control = 0;  // 1  = pressure control , 2 = position control
-                                 // // always use 1
-    unsigned short reserve = 0;  // unused
-    unsigned int timestamp_client = 0;
+    uint16_t counter = 0;  // counter
+    uint16_t connection =
+        0;                 // close connection if 0 // same as emergency stop ?
+    uint16_t control = 0;  // 1  = pressure control , 2 = position control
+                           // // always use 1
+    uint16_t reserve = 0;  // unused
+    uint32_t timestamp_client = 0;
     JointControl controls[4];
 } ToRobotMessage;
 
@@ -54,14 +55,14 @@ typedef struct  // f[4*((4*2)+4)] -> 48f
 
 typedef struct
 {
-    unsigned int system_errors;
-    unsigned int io_hardware_errors;
+    uint32_t system_errors;
+    uint32_t io_hardware_errors;
 } ErrorInformation;
 
 typedef struct  // Llffffff
 {
-    unsigned int dw_errors;
-    int encoder_value;
+    uint32_t dw_errors;
+    int32_t encoder_value;
     float angle;
     float speed;
     float pressure_agonist;
@@ -77,13 +78,13 @@ typedef struct  // Llffffff
 typedef struct  // LLLHHHH [JointSetPoint*4 : f*20] [JointData*4 : Llffffff*4]
                 // [PIDData : 48f] ff [ErrorInformation : LL]
 {
-    unsigned int time_micro_secs_sensor_data;
-    unsigned int time_micro_secs_actuator_data;
-    unsigned int time_micro_secs_set_points;
-    unsigned short operation;
-    unsigned short control;
-    unsigned short pressure_mode;
-    unsigned short b_quick_stop_pushed;
+    uint32_t time_micro_secs_sensor_data;
+    uint32_t time_micro_secs_actuator_data;
+    uint32_t time_micro_secs_set_points;
+    uint16_t operation;
+    uint16_t control;
+    uint16_t pressure_mode;
+    uint16_t b_quick_stop_pushed;
     JointSetPoint joints_set[4];
     JointData joints_data[4];
     PIDData r_pid_settings;
@@ -98,12 +99,12 @@ typedef struct  // LLLHHHH [JointSetPoint*4 : f*20] [JointData*4 : Llffffff*4]
  */
 typedef struct  // LLLHLL [ArmData]
 {
-    unsigned int index_control_task;
-    unsigned int index_set_points_cycle;
-    unsigned int index_udp_telegram;
-    unsigned int not_close_srv;
-    unsigned int time_micro_secs_udp_send;
-    unsigned int time_micro_secs_last_udp_receive;
+    uint32_t index_control_task;
+    uint32_t index_set_points_cycle;
+    uint32_t index_udp_telegram;
+    uint32_t not_close_srv;
+    uint32_t time_micro_secs_udp_send;
+    uint32_t time_micro_secs_last_udp_receive;
     ArmData data;
 } FromRobotMessage;
 

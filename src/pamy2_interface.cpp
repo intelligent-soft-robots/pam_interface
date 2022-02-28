@@ -23,23 +23,18 @@ void Pamy2Interface::set_pressure(int dof, Sign sign, int value)
     {
         throw std::runtime_error(
             std::string("can not set pressure for degree of freedom ") +
-            std::to_string(dof) + ": dof should be in range [1,3]");
+            std::to_string(dof) + ": dof should be in range [0,3]");
     }
     value = clip(config_.min_pressure(dof, sign),
                  config_.max_pressure(dof, sign),
                  value);
-    float value_d = convert_pressure(value);
+    float value_d = udp_.int_to_bar(value);
     udp_.update_pressure(dof, sign, value_d);
 }
 
 void Pamy2Interface::finalize_iteration()
 {
     udp_.send();
-}
-
-int Pamy2Interface::convert_pressure(float value) const
-{
-    return udp_.convert_pressure(value);
 }
 
 }  // namespace pam_interface

@@ -68,12 +68,12 @@ public:
      * pressures ranging from the min pressure and the max pressure
      * (as provided by the configuration parameter of the constructor)
      */
-    int convert_pressure(float value) const;
+    int bar_to_int(float value) const;
 
     /**
      * Counterpart of convert_pressure(float)
      */
-    float convert_pressure(int value) const;
+    float int_to_bar(int value) const;
 
 private:
     c_socket socket_;              // for communication with the robot

@@ -50,7 +50,7 @@ ssize_t c_receive(c_socket* socket_, void* message, int message_size)
 namespace pam_interface
 {
 template <typename FROM, typename TO>
-static TO cast_pressure(FROM value, FROM fmin, FROM fmax, TO tmax, TO tmin)
+static TO cast_pressure(FROM value, FROM fmin, FROM fmax, TO tmin, TO tmax)
 {
     // cast value, which should be in the range [fmin,fmax],
     // to a corresponding value in the range [tmax,tmin]
@@ -115,8 +115,8 @@ UDPCommunication::UDPCommunication(Configuration<NB_DOFS>& configuration,
         int imin_antago = configuration.min_pressure(dof, Sign::ANTAGONIST);
         int imax_ago = configuration.max_pressure(dof, Sign::AGONIST);
         int imax_antago = configuration.max_pressure(dof, Sign::ANTAGONIST);
-        float min_pressure_ago = this->convert_pressure(imin_ago);
-        float min_pressure_antago = this->convert_pressure(imin_antago);
+        float min_pressure_ago = int_to_bar(imin_ago);
+        float min_pressure_antago = int_to_bar(imin_antago);
         to_robot_.controls[dof].pressure_agonist = min_pressure_ago;
         to_robot_.controls[dof].pressure_antagonist = min_pressure_antago;
         update_pressure(dof, Sign::AGONIST, min_pressure_ago);
@@ -193,29 +193,28 @@ RobotState<NB_DOFS> UDPCommunication::receive()
         static_cast<int>(from_robot_.data.time_micro_secs_sensor_data),
         TimePoint(from_robot_.time_micro_secs_udp_send)};
 
-    static const double to_radian = -0.0174533;
-
     // will be used to perform some corrective transform on the received
     // angles
-    static const double PI = 3.141592653589793238463;
-    std::array<double, 4> signs{{1, 1, 1, -1}};
-    std::array<double, 4> rotations{{-5.37 * to_radian,
-                                     2.5 * to_radian,
-                                     -0.75 * to_radian,
-                                     -PI / 4. + 0.5 * to_radian}};
+    constexpr double PI = 3.141592653589793238463;
+    constexpr double TO_RADIAN = +PI / 180.;
+    std::array<double, 4> signs{{-1, -1, -1, +1}};
+    std::array<double, 4> rotations{{-5.37 * TO_RADIAN,
+                                     2.5 * TO_RADIAN,
+                                     -0.75 * TO_RADIAN,
+                                     -PI / 4. + 0.5 * TO_RADIAN}};
 
     for (int dof = 0; dof < NB_DOFS; dof++)
     {
-        double angle = from_robot_.data.joints_data[dof].angle * to_radian;
+        double angle = from_robot_.data.joints_data[dof].angle * TO_RADIAN;
         angle = rotate(angle, rotations[dof]);
         angle = angle * signs[dof];
-        double speed = from_robot_.data.joints_data[dof].speed * to_radian;
+        double speed = from_robot_.data.joints_data[dof].speed * TO_RADIAN;
         speed = speed * signs[dof];
         // the observed pressure (i.e. as read by the robot sensors)
-        int observed_pressure_ago = this->convert_pressure(
-            from_robot_.data.joints_data[dof].pressure_agonist);
-        int observed_pressure_antago = this->convert_pressure(
-            from_robot_.data.joints_data[dof].pressure_antagonist);
+        int observed_pressure_ago =
+            bar_to_int(from_robot_.data.joints_data[dof].pressure_agonist);
+        int observed_pressure_antago =
+            bar_to_int(from_robot_.data.joints_data[dof].pressure_antagonist);
         // the desired pressure (i.e. that the robot controller is trying to
         // converge to)
         int desired_pressure_ago =
@@ -247,14 +246,14 @@ const FromRobotMessage& UDPCommunication::get_received_message() const
     return from_robot_;
 }
 
-int UDPCommunication::convert_pressure(float v) const
+int UDPCommunication::bar_to_int(float v) const
 {
     // static function defined in this file
     return cast_pressure<float, int>(
         v, MIN_PRESSURE_BARS, MAX_PRESSURE_BARS, min_pressure_, max_pressure_);
 }
 
-float UDPCommunication::convert_pressure(int v) const
+float UDPCommunication::int_to_bar(int v) const
 {
     // static function defined in this file
     return cast_pressure<int, float>(

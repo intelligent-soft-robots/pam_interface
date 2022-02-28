@@ -61,9 +61,6 @@ public:
     void finalize_iteration() override;
 
 private:
-    int convert_pressure(float value) const;
-
-private:
     UDPCommunication udp_;
     Configuration<NB_DOFS> config_;
 };
