@@ -16,7 +16,8 @@ typedef struct
 
 /**
  * Structure that will be packed into UDP telegrams sent to the
- * robot.
+ * robot. This structure mainly contains the desired pressures 
+ * that are supposed to be applied to the robot  
  */
 typedef struct
 {
@@ -29,19 +30,6 @@ typedef struct
     uint32_t timestamp_client = 0;
     JointControl controls[4];
 } ToRobotMessage;
-
-typedef struct  // ff
-{
-    float valve;
-    float pressure;
-} MuscleSetPoint;
-
-typedef struct  // f ff ff
-{
-    float angle;
-    MuscleSetPoint agonist;
-    MuscleSetPoint antagonist;
-} JointSetPoint;
 
 typedef struct  // ffff
 {
@@ -56,6 +44,40 @@ typedef struct  // f[4*((4*2)+4)] -> 48f
     PID muscles[4][2];
     PID angles[4];
 } PIDData;
+
+/**
+ * Structure that will be packed into UDP telegrams sent to the
+ * robot. This structure mainly contains the PID values for the 
+ * pressure and joint angle controller that are supposed to be 
+ * applied to the robot  
+ */
+typedef struct // HLL [PIDData : 48f] 
+{
+    uint32_t counter = 0;  // counter
+    uint16_t telegram_type =
+        2;                 // unique ID for each type of telegram (does 
+                           // not yet exist for ToRobotMessage, always use 2)
+    uint16_t control = 0;  // 1  = pressure control , 2 = position control
+                           // // always use 1
+    PIDData s_pid_settings;
+} ToRobotPIDMessage;
+
+typedef struct  // ff
+{
+    float valve;
+    float pressure;
+} MuscleSetPoint;
+
+typedef struct  // f ff ff
+{
+    float angle;
+    MuscleSetPoint agonist;
+    MuscleSetPoint antagonist;
+} JointSetPoint;
+
+
+
+
 
 typedef struct
 {
