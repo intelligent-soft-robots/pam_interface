@@ -14,6 +14,10 @@ typedef struct
     float pressure_antagonist = 0;
 } JointControl;
 
+/**
+ * Structure that will be packed into UDP telegrams sent to the
+ * robot.
+ */
 typedef struct
 {
     uint16_t counter = 0;  // counter
@@ -71,10 +75,6 @@ typedef struct  // Llffffff
     float valve_antagonist;
 } JointData;
 
-/**
- * Structure that will be packed into UDP telegrams sent to the
- * robot.
- */
 typedef struct  // LLLHHHH [JointSetPoint*4 : f*20] [JointData*4 : Llffffff*4]
                 // [PIDData : 48f] ff [ErrorInformation : LL]
 {
