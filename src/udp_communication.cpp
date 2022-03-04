@@ -101,33 +101,39 @@ UDPCommunication::UDPCommunication(Configuration<NB_DOFS>& configuration,
         1;                  // other values would request the robot to shutdown
     to_robot_.control = 1;  // i.e. pressure control
 
-    // the robot uses pressure values between 0.2 and 4.0 bars, but for
+    // The robot uses pressure values between 0.2 and 4.0 bars, but for
     // historical reasons, we use int values for pressure. The configuration
     // tells us what is the range of int values for pressure.
-    min_pressure_ = std::numeric_limits<int>::infinity();
-    max_pressure_ = -std::numeric_limits<int>::infinity();
-
+    // Finding what are the max and min int pressures
+    // in the config file, to "tune" the bar_to_int
+    // and int_to_bar methods.
+    min_pressure_ = std::numeric_limits<int>::max();
+    max_pressure_ = -std::numeric_limits<int>::max();
     for (unsigned short dof = 0; dof < NB_DOFS; dof++)
     {
-        // setting default pressure to minimal pressures (and sending related
-        // UDP telegram)
         int imin_ago = configuration.min_pressure(dof, Sign::AGONIST);
         int imin_antago = configuration.min_pressure(dof, Sign::ANTAGONIST);
         int imax_ago = configuration.max_pressure(dof, Sign::AGONIST);
         int imax_antago = configuration.max_pressure(dof, Sign::ANTAGONIST);
-        float min_pressure_ago = int_to_bar(imin_ago);
-        float min_pressure_antago = int_to_bar(imin_antago);
-        to_robot_.controls[dof].pressure_agonist = min_pressure_ago;
-        to_robot_.controls[dof].pressure_antagonist = min_pressure_antago;
-        update_pressure(dof, Sign::AGONIST, min_pressure_ago);
-        update_pressure(dof, Sign::ANTAGONIST, min_pressure_antago);
-        send();
-        // keeping track of what are the min and max int pressures
-        // observed in the configuration file.
         min_pressure_ = std::min(min_pressure_, imin_ago);
         min_pressure_ = std::min(min_pressure_, imin_antago);
         max_pressure_ = std::max(max_pressure_, imax_ago);
         max_pressure_ = std::max(max_pressure_, imax_antago);
+    }
+
+    // sending udp telegram requesting minimal pressures
+    // on all muscles
+    for (unsigned short dof = 0; dof < NB_DOFS; dof++)
+    {
+      int imin_ago = configuration.min_pressure(dof, Sign::AGONIST);
+      int imin_antago = configuration.min_pressure(dof, Sign::ANTAGONIST);
+      float min_pressure_ago = int_to_bar(imin_ago);
+      float min_pressure_antago = int_to_bar(imin_antago);
+      to_robot_.controls[dof].pressure_agonist = min_pressure_ago;
+      to_robot_.controls[dof].pressure_antagonist = min_pressure_antago;
+      update_pressure(dof, Sign::AGONIST, min_pressure_ago);
+      update_pressure(dof, Sign::ANTAGONIST, min_pressure_antago);
+      send();
     }
 }
 
@@ -218,16 +224,16 @@ RobotState<NB_DOFS> UDPCommunication::receive()
         // the desired pressure (i.e. that the robot controller is trying to
         // converge to)
         int desired_pressure_ago =
-            from_robot_.data.joints_set[dof].agonist.pressure;
+	  bar_to_int(from_robot_.data.joints_set[dof].agonist.pressure);
         int desired_pressure_antago =
-            from_robot_.data.joints_set[dof].antagonist.pressure;
+	  bar_to_int(from_robot_.data.joints_set[dof].antagonist.pressure);
         if (dof == 3)
         {
             // for 3rd dof, the muscles are inverted
             std::swap(observed_pressure_ago, observed_pressure_antago);
             std::swap(desired_pressure_ago, desired_pressure_antago);
         }
-        state.set_joint(
+	state.set_joint(
             dof,
             observed_pressure_ago,
             observed_pressure_antago,
@@ -255,9 +261,9 @@ int UDPCommunication::bar_to_int(float v) const
 
 float UDPCommunication::int_to_bar(int v) const
 {
-    // static function defined in this file
-    return cast_pressure<int, float>(
-        v, min_pressure_, max_pressure_, MIN_PRESSURE_BARS, MAX_PRESSURE_BARS);
+  // static function defined in this file
+  return cast_pressure<int, float>(
+				   v, min_pressure_, max_pressure_, MIN_PRESSURE_BARS, MAX_PRESSURE_BARS);
 }
 
 void print_to_robot_message(const ToRobotMessage& message)
