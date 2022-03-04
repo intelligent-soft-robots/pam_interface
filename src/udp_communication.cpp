@@ -49,18 +49,6 @@ ssize_t c_receive(c_socket* socket_, void* message, int message_size)
 
 namespace pam_interface
 {
-template <typename FROM, typename TO>
-static TO cast_pressure(FROM value, FROM fmin, FROM fmax, TO tmin, TO tmax)
-{
-    // cast value, which should be in the range [fmin,fmax],
-    // to a corresponding value in the range [tmax,tmin]
-    float min_from = static_cast<float>(fmin);
-    float min_to = static_cast<float>(tmin);
-    float range_from = static_cast<float>(fmax) - min_from;
-    float range_to = static_cast<float>(tmax) - min_to;
-    float v = min_to + ((value - min_from) / range_from) * range_to;
-    return static_cast<TO>(v);
-}
 
 static void init_to_robot_message(ToRobotMessage& message)
 {
@@ -100,26 +88,6 @@ UDPCommunication::UDPCommunication(Configuration<NB_DOFS>& configuration,
     to_robot_.connection =
         1;                  // other values would request the robot to shutdown
     to_robot_.control = 1;  // i.e. pressure control
-
-    // The robot uses pressure values between 0.2 and 4.0 bars, but for
-    // historical reasons, we use int values for pressure. The configuration
-    // tells us what is the range of int values for pressure.
-    // Finding what are the max and min int pressures
-    // in the config file, to "tune" the bar_to_int
-    // and int_to_bar methods.
-    min_pressure_ = std::numeric_limits<int>::max();
-    max_pressure_ = -std::numeric_limits<int>::max();
-    for (unsigned short dof = 0; dof < NB_DOFS; dof++)
-    {
-        int imin_ago = configuration.min_pressure(dof, Sign::AGONIST);
-        int imin_antago = configuration.min_pressure(dof, Sign::ANTAGONIST);
-        int imax_ago = configuration.max_pressure(dof, Sign::AGONIST);
-        int imax_antago = configuration.max_pressure(dof, Sign::ANTAGONIST);
-        min_pressure_ = std::min(min_pressure_, imin_ago);
-        min_pressure_ = std::min(min_pressure_, imin_antago);
-        max_pressure_ = std::max(max_pressure_, imax_ago);
-        max_pressure_ = std::max(max_pressure_, imax_antago);
-    }
 
     // sending udp telegram requesting minimal pressures
     // on all muscles
@@ -254,16 +222,12 @@ const FromRobotMessage& UDPCommunication::get_received_message() const
 
 int UDPCommunication::bar_to_int(float v) const
 {
-    // static function defined in this file
-    return cast_pressure<float, int>(
-        v, MIN_PRESSURE_BARS, MAX_PRESSURE_BARS, min_pressure_, max_pressure_);
+  return static_cast<int>( (v-INT_TO_BAR_BIAS) / INT_TO_BAR_MULTIPLYER );
 }
 
 float UDPCommunication::int_to_bar(int v) const
 {
-  // static function defined in this file
-  return cast_pressure<int, float>(
-				   v, min_pressure_, max_pressure_, MIN_PRESSURE_BARS, MAX_PRESSURE_BARS);
+  return INT_TO_BAR_MULTIPLYER * static_cast<double>(v) + INT_TO_BAR_BIAS;
 }
 
 void print_to_robot_message(const ToRobotMessage& message)

@@ -15,9 +15,15 @@
 #define NB_DOFS 4
 #define BUFFER_LENGTH 46
 
-// hardware specifications of Pamy2
+// for converting from "int" (pamy1 supported
+// pressures values) to float (bars, pamy2 supported
+// pressures values)
+#define INT_TO_BAR_MULTIPLYER 0.0002
+#define INT_TO_BAR_BIAS -1.7888
+
 #define MIN_PRESSURE_BARS 0.2
 #define MAX_PRESSURE_BARS 4.0
+
 
 extern "C"
 {
@@ -79,10 +85,6 @@ private:
     c_socket socket_;              // for communication with the robot
     ToRobotMessage to_robot_;      // for encapsulating commands sent to robot
     FromRobotMessage from_robot_;  // for encapsulating data received from robot
-    int min_pressure_;  // as provided by the configuration instance passed to
-                        // constructor
-    int max_pressure_;  // as provided by the configuration instance passed to
-                        // constructor
 };
 
 /**
