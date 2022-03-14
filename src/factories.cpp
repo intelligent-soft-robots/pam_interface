@@ -18,7 +18,7 @@ static void construct_robot(NiFpgaRobot &robot)
 
     robot.attribute = ATTRIBUTE;
     robot.signature = SIGNATURE;
-    robot.ni_bit_file = NI_BIT_FILE;
+    robot.ni_bit_file = get_ni_bit_file_path();
     robot.ni_resource = NI_RESOURCE;
 
     robot.iteration_sensor = ITERATION_SENSOR;

@@ -16,6 +16,7 @@
 
   <depend>pybind11_vendor</depend>
   <depend>json_helper</depend>
+  <depend>pam_configuration</depend>
   <depend>shared_memory</depend>
   <depend>mpi_cmake_modules</depend>
 

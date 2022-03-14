@@ -1,8 +1,5 @@
+#include "pam_configuration/pam_configuration.hpp"
 #include "pam_interface/real/pamy1/nifpga/robot.hpp"
-
-// note : BITFILE_4DOFS_FILE_PATH replaced by absolute path to the file in
-// CMakeLists.txt
-const std::string NI_BIT_FILE(BITFILE_4DOFS_FILE_PATH);
 
 namespace pam_interface
 {

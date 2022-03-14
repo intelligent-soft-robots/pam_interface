@@ -1,6 +1,11 @@
 #pragma once
 
+#include "pam_configuration/pam_configuration.hpp"
 #include "pam_interface/configuration.hpp"
+
+// parent folder will be ~/.mpi-is/pam
+// or /opt/mpi-is/pam
+#define PAMY1_JSON_RELATIVE_PATH "/pam_interface/pamy1/config/pam.json"
 
 namespace pam_interface
 {

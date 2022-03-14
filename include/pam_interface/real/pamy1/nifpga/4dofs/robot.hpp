@@ -2,6 +2,20 @@
 
 #include <string>
 #include "generated.h"
+#include "pam_configuration/pam_configuration.hpp"
+
+#define NI_BIT_FILE_SUBDIR "pam_interface/pamy1/bitfile/pam_robot.lvbitx"
+
+// NI fpga configuration
+const std::string get_ni_bit_file_path()
+{
+  return pam_configuration::get_path().string()+std::string(NI_BIT_FILE_SUBDIR);
+}
+
+const std::string NI_RESOURCE("RIO0");
+
+// PLUS: agonist muscles
+// MINUS: antagonist muscles
 
 const int PLUS_INDEXES[4] = {0, 2, 4, 7};
 
@@ -23,9 +37,6 @@ const bool ENCODER_NEGATIVE[4] = {true, false, false, true};
 
 const std::string SIGNATURE = NiFpga_interfaceNewRobotallMuscles_Signature;
 const uint32_t ATTRIBUTE = NiFpga_OpenAttribute_NoRun;
-
-const std::string NI_BIT_FILE(BITFILE_4DOFS_FILE_PATH);
-const std::string NI_RESOURCE("RIO0");
 
 const uint32_t ENCODERS[4] = {
     NiFpga_interfaceNewRobotallMuscles_IndicatorI32_q1,
