@@ -9,7 +9,7 @@
 // NI fpga configuration
 const std::string get_ni_bit_file_path()
 {
-  return pam_configuration::get_path().string()+std::string(NI_BIT_FILE_SUBDIR);
+  return ( pam_configuration::get_path() / std::string(NI_BIT_FILE_SUBDIR) ).string();
 }
 
 const std::string NI_RESOURCE("RIO0");

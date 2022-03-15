@@ -5,7 +5,7 @@
 
 // parent folder will be ~/.mpi-is/pam
 // or /opt/mpi-is/pam
-#define PAMY1_JSON_RELATIVE_PATH "/pam_interface/pamy1/config/pam.json"
+#define PAMY1_JSON_RELATIVE_PATH "pam_interface/pamy1/config/pam.json"
 
 namespace pam_interface
 {

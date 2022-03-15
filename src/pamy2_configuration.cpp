@@ -9,8 +9,7 @@ Pamy2DefaultConfiguration::Pamy2DefaultConfiguration()
 
 std::string Pamy2DefaultConfiguration::get_default_configuration_path()
 {
-  std::string parent_folder =  pam_configuration::get_path();
-  return parent_folder+std::string(PAMY2_JSON_RELATIVE_PATH);
+  return ( pam_configuration::get_path() / std::string(PAMY2_JSON_RELATIVE_PATH) ).string();
 }
 
 }  // namespace pam_interface

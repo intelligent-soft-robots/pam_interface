@@ -8,6 +8,5 @@ Pamy1DefaultConfiguration<NB_DOFS>::Pamy1DefaultConfiguration()
 template <int NB_DOFS>
 std::string Pamy1DefaultConfiguration<NB_DOFS>::get_default_configuration_path()
 {
-  std::string parent_folder = pam_configuration::get_path().string();
-  return parent_folder+std::string(PAMY1_JSON_RELATIVE_PATH);
+  return ( pam_configuration::get_path() / std::string(PAMY1_JSON_RELATIVE_PATH) ).string();
 }
