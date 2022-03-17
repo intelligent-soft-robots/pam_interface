@@ -43,6 +43,7 @@ add_library( ${PROJECT_NAME} SHARED
   src/NiFpga.c
   src/NiFpga_exception.cpp
   src/NiFpga_robot.cpp
+  src/4dofs/robot.cpp
   src/typedefs.cpp
   src/factories.cpp
   src/interface.cpp
