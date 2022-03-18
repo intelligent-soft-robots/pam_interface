@@ -15,6 +15,9 @@ NiFpga_interfaceNewRobotallMuscles.h in a more convenient way
 #include "NiFpga.h"
 #include "NiFpga_exception.hpp"
 
+#define PAMY1_NI_BIT_FILE_SUBDIR "pam_interface/pamy1/bitfile/pam_robot.lvbitx"
+#define PAMY1_CONFIG_SUB_FOLDER "/pam_interface/pamy1/config/"
+
 namespace pam_interface
 {
 // code common to all robots ------------------------------------------

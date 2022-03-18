@@ -1,0 +1,2 @@
+Configuration files have been moved to the pam_configuration repository
+https://github.com/intelligent-soft-robots/pam_configuration

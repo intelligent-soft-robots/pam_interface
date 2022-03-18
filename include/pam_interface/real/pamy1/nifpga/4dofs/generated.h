@@ -12,18 +12,6 @@
 #include "pam_interface/real/pamy1/nifpga/NiFpga.h"
 
 /**
- * The filename of the FPGA bitfile.
- *
- * This is a #define to allow for string literal concatenation. For example:
- *
- *    static const char* const Bitfile = "C:\\"
- * NiFpga_interfaceNewRobotallMuscles_Bitfile;
- */
-// note : BITFILE_4DOFS_FILE_PATH replaced by absolute path to the file in
-// CMakeLists.txt
-#define NiFpga_interfaceNewRobotallMuscles_Bitfile BITFILE_4DOFS_FILE_PATH
-
-/**
  * The signature of the FPGA bitfile.
  */
 static const char* const NiFpga_interfaceNewRobotallMuscles_Signature =
