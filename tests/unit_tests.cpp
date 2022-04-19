@@ -27,7 +27,8 @@ class PamInterfaceTests : public ::testing::Test
 
 TEST_F(PamInterfaceTests, dummy_interface)
 {
-    Pamy1DefaultConfiguration<4> configuration;
+    bool simulation = true;
+    Pamy1DefaultConfiguration<4> configuration(simulation);
     DummyInterface<4> interface(configuration);
     interface.set_pressure(1, Sign::AGONIST, 16000);
     interface.set_pressure(2, Sign::ANTAGONIST, 16500);
@@ -37,19 +38,22 @@ TEST_F(PamInterfaceTests, dummy_interface)
 
 TEST_F(PamInterfaceTests, pamy1_interface_instantiation)
 {
-    Pamy1DefaultConfiguration<4> configuration;
+    bool simulation = true;
+    Pamy1DefaultConfiguration<4> configuration(simulation);
     Pamy1Interface<4> interface(configuration);
 }
 
 TEST_F(PamInterfaceTests, dummy_driver_instantiation)
 {
-    Pamy1DefaultConfiguration<4> configuration;
+    bool simulation = true;
+    Pamy1DefaultConfiguration<4> configuration(simulation);
     DummyRobotDriver<4> driver(configuration);
 }
 
 TEST_F(PamInterfaceTests, dummy_robot)
 {
-    Pamy1DefaultConfiguration<4> configuration;
+    bool simulation = true;
+    Pamy1DefaultConfiguration<4> configuration(simulation);
 
     pam_interface::DummyRobotDriver<4> robot(configuration);
 
@@ -100,26 +104,24 @@ TEST_F(PamInterfaceTests, rotate)
     ASSERT_NEAR(angle, -pi / 8., precision);
 }
 
-
 static void test_config(const pam_interface::Configuration<NB_DOFS>& config)
 {
-  for(int dof=0;dof<NB_DOFS;dof++)
+    for (int dof = 0; dof < NB_DOFS; dof++)
     {
-      ASSERT_GT(config.max_pressures_ago[dof],
-		config.min_pressures_ago[dof]);
+        ASSERT_GT(config.max_pressures_ago[dof], config.min_pressures_ago[dof]);
     }
-
 }
-
 
 TEST_F(PamInterfaceTests, pamy1_configuration)
 {
-  Pamy1DefaultConfiguration<4> configuration;
-  test_config(configuration);
+    bool simulation = true;
+    Pamy1DefaultConfiguration<4> configuration(simulation);
+    test_config(configuration);
 }
 
 TEST_F(PamInterfaceTests, pamy2_configuration)
 {
-  Pamy2DefaultConfiguration configuration;
-  test_config(configuration);
+    bool simulation = true;
+    Pamy2DefaultConfiguration configuration(simulation);
+    test_config(configuration);
 }
