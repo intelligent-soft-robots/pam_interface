@@ -48,13 +48,13 @@ PYBIND11_MODULE(pam_interface, m)
 
     pybind11::class_<Pamy1DefaultConfig, JsonConfig>(
         m, "Pamy1DefaultConfiguration")
-        .def(pybind11::init<>())
+        .def(pybind11::init<bool>())
         .def("display", &Pamy1DefaultConfig::print)
         .def("get_path", &Pamy1DefaultConfig::get_default_configuration_path);
 
     pybind11::class_<Pamy2DefaultConfig, JsonConfig>(
         m, "Pamy2DefaultConfiguration")
-        .def(pybind11::init<>())
+        .def(pybind11::init<bool>())
         .def("display", &Pamy2DefaultConfig::print)
         .def("get_path", &Pamy2DefaultConfig::get_default_configuration_path);
 
@@ -151,4 +151,5 @@ PYBIND11_MODULE(pam_interface, m)
         .def(pybind11::init<const Config>())
         .def("pressure_in", &DummyDriver::in)
         .def("data_out", &DummyDriver::out);
+
 }

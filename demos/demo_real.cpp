@@ -5,7 +5,8 @@
 void run()
 {
     // configuration for this robot instance
-    pam_interface::Pamy1DefaultConfiguration<4> configuration;
+    bool simulation = false;
+    pam_interface::Pamy1DefaultConfiguration<4> configuration(simulation);
 
     pam_interface::Pamy1Driver<4> robot(configuration);
 
