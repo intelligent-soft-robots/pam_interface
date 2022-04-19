@@ -52,7 +52,8 @@ static void perform_steps(pam_interface::UDPCommunication udp_com)
 
 void perform(std::string ip, uint port)
 {
-    pam_interface::Pamy2DefaultConfiguration config;
+    bool simulation = false;
+    pam_interface::Pamy2DefaultConfiguration config(simulation);
     pam_interface::UDPCommunication udp_com(config, ip, port);
     perform_steps(udp_com);
 }
