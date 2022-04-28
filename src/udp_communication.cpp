@@ -171,11 +171,11 @@ RobotState<NB_DOFS> UDPCommunication::receive()
     // angles
     constexpr double PI = 3.141592653589793238463;
     constexpr double TO_RADIAN = +PI / 180.;
-    std::array<double, 4> signs{{-1, -1, -1, +1}};
-    std::array<double, 4> rotations{{-5.37 * TO_RADIAN,
-                                     2.5 * TO_RADIAN,
-                                     -0.75 * TO_RADIAN,
-                                     -PI / 4. + 0.5 * TO_RADIAN}};
+    std::array<double, 4> signs{{+1, +1, +1, -1}};
+    std::array<double, 4> rotations{{0 * TO_RADIAN,
+                                     0 * TO_RADIAN,
+                                     0 * TO_RADIAN,
+                                     0 * TO_RADIAN}};
 
     for (int dof = 0; dof < NB_DOFS; dof++)
     {
