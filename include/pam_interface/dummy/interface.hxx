@@ -1,5 +1,3 @@
-
-
 #define UNUSED(x) (void)(x)
 
 template <int NB_DOFS>

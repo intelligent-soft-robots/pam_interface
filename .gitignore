@@ -1,5 +1,7 @@
+# IDE meta files
+.idea
+.vscode
+
+# Python meta files
 *~
 *.pyc
-
-# IDE meta data
-.vscode/

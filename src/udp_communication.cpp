@@ -49,7 +49,6 @@ ssize_t c_receive(c_socket* socket_, void* message, int message_size)
 
 namespace pam_interface
 {
-
 static void init_to_robot_message(ToRobotMessage& message)
 {
     message.counter = 0;
@@ -93,15 +92,15 @@ UDPCommunication::UDPCommunication(Configuration<NB_DOFS>& configuration,
     // on all muscles
     for (unsigned short dof = 0; dof < NB_DOFS; dof++)
     {
-      int imin_ago = configuration.min_pressure(dof, Sign::AGONIST);
-      int imin_antago = configuration.min_pressure(dof, Sign::ANTAGONIST);
-      float min_pressure_ago = int_to_bar(imin_ago);
-      float min_pressure_antago = int_to_bar(imin_antago);
-      to_robot_.controls[dof].pressure_agonist = min_pressure_ago;
-      to_robot_.controls[dof].pressure_antagonist = min_pressure_antago;
-      update_pressure(dof, Sign::AGONIST, min_pressure_ago);
-      update_pressure(dof, Sign::ANTAGONIST, min_pressure_antago);
-      send();
+        int imin_ago = configuration.min_pressure(dof, Sign::AGONIST);
+        int imin_antago = configuration.min_pressure(dof, Sign::ANTAGONIST);
+        float min_pressure_ago = int_to_bar(imin_ago);
+        float min_pressure_antago = int_to_bar(imin_antago);
+        to_robot_.controls[dof].pressure_agonist = min_pressure_ago;
+        to_robot_.controls[dof].pressure_antagonist = min_pressure_antago;
+        update_pressure(dof, Sign::AGONIST, min_pressure_ago);
+        update_pressure(dof, Sign::ANTAGONIST, min_pressure_antago);
+        send();
     }
 }
 
@@ -172,10 +171,8 @@ RobotState<NB_DOFS> UDPCommunication::receive()
     constexpr double PI = 3.141592653589793238463;
     constexpr double TO_RADIAN = +PI / 180.;
     std::array<double, 4> signs{{1, +1, +1, -1}};
-    std::array<double, 4> rotations{{0 * TO_RADIAN,
-                                     0 * TO_RADIAN,
-                                     0 * TO_RADIAN,
-                                     0 * TO_RADIAN}};
+    std::array<double, 4> rotations{
+        {0 * TO_RADIAN, 0 * TO_RADIAN, 0 * TO_RADIAN, 0 * TO_RADIAN}};
 
     for (int dof = 0; dof < NB_DOFS; dof++)
     {
@@ -192,16 +189,16 @@ RobotState<NB_DOFS> UDPCommunication::receive()
         // the desired pressure (i.e. that the robot controller is trying to
         // converge to)
         int desired_pressure_ago =
-	  bar_to_int(from_robot_.data.joints_set[dof].agonist.pressure);
+            bar_to_int(from_robot_.data.joints_set[dof].agonist.pressure);
         int desired_pressure_antago =
-	  bar_to_int(from_robot_.data.joints_set[dof].antagonist.pressure);
+            bar_to_int(from_robot_.data.joints_set[dof].antagonist.pressure);
         if (dof == 3)
         {
             // for 3rd dof, the muscles are inverted
             std::swap(observed_pressure_ago, observed_pressure_antago);
             std::swap(desired_pressure_ago, desired_pressure_antago);
         }
-	state.set_joint(
+        state.set_joint(
             dof,
             observed_pressure_ago,
             observed_pressure_antago,
@@ -222,12 +219,12 @@ const FromRobotMessage& UDPCommunication::get_received_message() const
 
 int UDPCommunication::bar_to_int(float v) const
 {
-  return static_cast<int>( (v-INT_TO_BAR_BIAS) / INT_TO_BAR_MULTIPLYER );
+    return static_cast<int>((v - INT_TO_BAR_BIAS) / INT_TO_BAR_MULTIPLYER);
 }
 
 float UDPCommunication::int_to_bar(int v) const
 {
-  return INT_TO_BAR_MULTIPLYER * static_cast<double>(v) + INT_TO_BAR_BIAS;
+    return INT_TO_BAR_MULTIPLYER * static_cast<double>(v) + INT_TO_BAR_BIAS;
 }
 
 void print_to_robot_message(const ToRobotMessage& message)

@@ -11,10 +11,27 @@
 
 namespace pam_interface
 {
+/**
+ * @brief Pamy2DefaultConfiguration Class
+ *
+ * Stores Pamy 2 default parameters.
+ */
 class Pamy2DefaultConfiguration : public JsonConfiguration<4>
 {
 public:
+    /**
+     * Constructs a new Pamy2DefaultConfiguration object.
+     *
+     * @param simulation Specifier for real or simulated robot
+     */
     Pamy2DefaultConfiguration(bool simulation);
+
+    /**
+     * @brief Get the default configuration path object
+     *
+     * @param simulation Specifier for real or simulated robot
+     * @return std::string Path to configuration file
+     */
     static std::string get_default_configuration_path(bool simulation);
 };
 

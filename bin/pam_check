@@ -8,10 +8,21 @@ import pam_interface
 SEGMENT_ID = "pam_robot"
 DELTA_PRESSURE = 2000
 
-# for the specified muscle, goes from its current pressure
-# to target pressure (which is current pressure + delta pressure), then back.
-# return an array of (time stamp, input pressure, measured pressure)
-def reach_target(segment_id, dofs, dof, sign, delta_pressure):
+
+def reach_target(segment_id, dof, sign, delta_pressure):
+    """Iterates the pressure from current pressure to target pressure up,
+    followed by iterating it back to current pressure.
+
+    Args:
+        segment_id (string): segment ID specifier
+        dof (int): specified degree of freedom
+        sign (int): agonist antagonist specifier (0 for agonist, 
+        1 for antagonist, see sign.hpp for reference)
+        delta_pressure (int): pressure difference to be iterated
+
+    Returns:
+        list: array of time stamp, input pressure and measured pressure
+    """
 
     time_start = time.time()
 
@@ -57,9 +68,16 @@ def reach_target(segment_id, dofs, dof, sign, delta_pressure):
     return data
 
 
-# plot data (data as returned
-# by reach target above)
 def plot(axis, data, dof, sign):
+    """Generates plot from provided data for agonist and antagonist.
+
+    Args:
+        axis (axes): Axes object from matplotlib.pyplot.subplot
+        data (list): as returned by :func:`reach_target`
+        dof (int): degree of freedom
+        sign (int): agonist antagonist specifier (0 for agonist, 
+        1 for antagonist, see sign.hpp for reference)
+    """
     if sign == 0:
         ago = "agonist"
     else:
@@ -73,7 +91,16 @@ def plot(axis, data, dof, sign):
 
 
 def run(segment_id, delta_pressure, dofs):
+    """Runs control loop.
 
+    Plots pressure while incrementally increasing
+    pressures until dof specific target pressure is reached.
+
+    Args:
+        segment_id (string): segment ID specifier
+        delta_pressure (int): pressure difference to be iterated
+        dofs (list of ints): list of available degrees of freedom
+    """
     # data will be {dof:[data agonist, data antagonist]}
     all_data = {dof: [None, None] for dof in dofs}
 
@@ -87,7 +114,7 @@ def run(segment_id, delta_pressure, dofs):
                 all_data[dof][1] = data
 
     # plotting
-    fix, axes = plt.subplots(4, 2)
+    fig, axes = plt.subplots(4, 2)
     for dof in dofs:
         for sign in range(2):
             axis = axes[dof, sign]
@@ -97,7 +124,6 @@ def run(segment_id, delta_pressure, dofs):
 
 
 if __name__ == "__main__":
-
     dofs = [0, 1, 2, 3]
     for arg in sys.argv:
         try:

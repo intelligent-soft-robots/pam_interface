@@ -5,10 +5,11 @@
 namespace pam_interface
 {
 /**
- * to_rotate being an angle in radian, this
- * method returns the addition of to_rotate
- * to rotation_angle, casted between -pi and
- * +pi.
+ * Returns addition of given to_rotate variable with
+ * rotation_angle. Angles are casted between minus pi
+ * and plus pi.
+ *
+ * Variables should be given in radian.
  */
 double rotate(double to_rotate, double rotation_angle);
 

@@ -15,8 +15,13 @@ namespace four_dofs
 static std::shared_ptr<Interface<4>> interface_4dofs_g;
 
 /**
- * @brief returns a pointer to a hardware interface
- * to a dummy 4dof robot
+ * Returns a pointer to a hardware interface
+ * to a dummy 4 DoF robot.
+ *
+ * @tparam NB_DOFS Number of degrees of freedom
+ * @param configuration Pamy1Configuration object
+ * @return std::shared_ptr<Interface<NB_DOFS>> Smart pointer
+ * to interface
  */
 template <int NB_DOFS>
 std::shared_ptr<Interface<NB_DOFS>> get_interface(

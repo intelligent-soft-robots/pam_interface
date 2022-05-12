@@ -161,7 +161,10 @@ if(BUILD_TESTING)
   ament_add_gtest(test_${PROJECT_NAME}_cpp tests/main.cpp tests/unit_tests.cpp)
   target_link_libraries(test_${PROJECT_NAME}_cpp ${PROJECT_NAME})
 endif()
-      
 
 
+#################
+# Documentation #
+#################
 
+add_documentation()

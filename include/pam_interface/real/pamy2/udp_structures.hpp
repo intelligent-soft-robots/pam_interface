@@ -94,8 +94,8 @@ typedef struct  // LLLHHHH [JointSetPoint*4 : f*20] [JointData*4 : Llffffff*4]
 } ArmData;
 
 /**
- * Structure into which telegrams received by
- * the robot will be unpacked.
+ * Structure into which telegrams received by the robot will
+ * be unpacked.
  */
 typedef struct  // LLLHLL [ArmData]
 {
