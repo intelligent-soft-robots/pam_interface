@@ -175,7 +175,6 @@ RobotState<NB_DOFS> UDPCommunication::receive()
     std::array<double, 4> rotations{
         {0 * TO_RADIAN, 0 * TO_RADIAN, 0 * TO_RADIAN, 0 * TO_RADIAN}};
 
-
     for (int dof = 0; dof < NB_DOFS; dof++)
     {
         double angle = from_robot_.data.joints_data[dof].angle * TO_RADIAN;
