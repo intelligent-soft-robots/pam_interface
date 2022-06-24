@@ -151,5 +151,4 @@ PYBIND11_MODULE(pam_interface, m)
         .def(pybind11::init<const Config>())
         .def("pressure_in", &DummyDriver::in)
         .def("data_out", &DummyDriver::out);
-
 }

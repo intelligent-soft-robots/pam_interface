@@ -6,14 +6,19 @@ Pamy1DefaultConfiguration<NB_DOFS>::Pamy1DefaultConfiguration(bool simulation)
 }
 
 template <int NB_DOFS>
-std::string Pamy1DefaultConfiguration<NB_DOFS>::get_default_configuration_path(bool simulation)
+std::string Pamy1DefaultConfiguration<NB_DOFS>::get_default_configuration_path(
+    bool simulation)
 {
-  if (simulation)
+    if (simulation)
     {
-      return ( pam_configuration::get_path() / std::string(PAMY1_SIM_JSON_RELATIVE_PATH) ).string();
+        return (pam_configuration::get_path() /
+                std::string(PAMY1_SIM_JSON_RELATIVE_PATH))
+            .string();
     }
-  else
+    else
     {
-      return ( pam_configuration::get_path() / std::string(PAMY1_REAL_JSON_RELATIVE_PATH) ).string();
+        return (pam_configuration::get_path() /
+                std::string(PAMY1_REAL_JSON_RELATIVE_PATH))
+            .string();
     }
 }

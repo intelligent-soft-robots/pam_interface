@@ -11,6 +11,14 @@ Driver<NB_DOFS>::~Driver()
     hw_interface_->terminate();
 }
 
+/**
+ * Assigns passed pressures of pressure_action to each muscle
+ * of each degree of freedom via the hardware interface of FPGA.
+ *
+ * @tparam NB_DOFS Number of degrees of freedom.
+ * @param pressure_action Object of PressureAction class specifying
+ * the pressures values via get-method.
+ */
 template <int NB_DOFS>
 void Driver<NB_DOFS>::in(const PressureAction<2 * NB_DOFS>& pressure_action)
 {
@@ -31,6 +39,13 @@ void Driver<NB_DOFS>::in(const PressureAction<2 * NB_DOFS>& pressure_action)
     hw_interface_->finalize_iteration();
 }
 
+/**
+ * Fetches all states from hardware interface and
+ * returns them for each degree of freedom.
+ *
+ * @tparam NB_DOFS number of degrees of freedom.
+ * @return RobotState<NB_DOFS>
+ */
 template <int NB_DOFS>
 RobotState<NB_DOFS> Driver<NB_DOFS>::out()
 {

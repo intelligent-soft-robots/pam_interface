@@ -1,4 +1,3 @@
-
 template <int NB_DOFS>
 DummyRobotDriver<NB_DOFS>::DummyRobotDriver(
     const Configuration<NB_DOFS>& config)

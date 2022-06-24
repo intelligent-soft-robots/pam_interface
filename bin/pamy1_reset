@@ -6,9 +6,16 @@ import pam_interface
 
 SEGMENT_ID = "pam_robot"
 
-# on exit: setting desired pressures to
-# minimum (as specified by config)
+
 def set_pressures_to_minimum(robot, config):
+    """Sets desired pressures to minimum as specified
+    in the corresponding configuration file.
+
+    Args:
+        robot: robot specified in pam interface
+        config: configuration specified in pam interface
+    """
+
     def _ended(agos, antagos, min_pressure_agos, min_pressure_antagos):
         if not all([a <= ma for a, ma in zip(agos, min_pressure_agos)]):
             return False
@@ -60,8 +67,12 @@ def set_pressures_to_minimum(robot, config):
         set_pressures_to_minimum(robot, config)
 
 
-# run the control loop
 def run(segment_id):
+    """Runs the control loop for iteratively setting pressure to minimum.
+
+    Args:
+        segment_id (string): segment ID specifier
+    """
 
     # default config
     configuration = pam_interface.DefaultConfiguration()
@@ -74,11 +85,10 @@ def run(segment_id):
 
     # setting pressures to minimum
     set_pressures_to_minimum(robot, configuration)
-    
+
     # this triggers also closing of fpga
     del robot
 
 
 if __name__ == "__main__":
-
     run(SEGMENT_ID)

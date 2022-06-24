@@ -4,10 +4,19 @@
 
 namespace pam_interface
 {
+/**
+ * @brief JointState management class.
+ */
 class JointState
-
 {
 public:
+    /**
+     * Serialization of pressure values in specified
+     * archive.
+     *
+     * @tparam Archive
+     * @param archive Archive object
+     */
     template <class Archive>
     void serialize(Archive &archive)
     {

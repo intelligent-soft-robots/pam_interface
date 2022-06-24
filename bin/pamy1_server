@@ -6,15 +6,27 @@ import pam_interface
 
 SEGMENT_ID = "pam_robot"
 
-# pressure being an int, cast to a
-# string of size 6
+
 def fix_size(pressure):
+    """Converts pressure to string of size 6.
+
+    Args:
+        pressure (int): current pressure
+
+    Returns:
+        string: pressure with size 6
+    """
     s = str(pressure)
     missing = 6 - len(s)
     return " " * missing + s
 
 
 def display(robot_state):
+    """Prints current robot state in terminal.
+
+    Args:
+        robot_state: instance of current robot state
+    """
     s = []
     for dof in range(4):
         observed_ago = fix_size(robot_state.get(dof, pam_interface.sign.agonist))
@@ -46,9 +58,12 @@ def display(robot_state):
     print(" | ".join(s))
 
 
-# print the robot state in the terminal
-# (short version: only the pressures)
 def short_display(robot_state):
+    """Prints current pressure in terminal.
+
+    Args:
+        robot_state: instance of current robot state
+    """
     s = []
     for dof in range(4):
         observed_ago = fix_size(robot_state.get(dof, pam_interface.sign.agonist))
@@ -70,9 +85,15 @@ def short_display(robot_state):
     print(" | ".join(s))
 
 
-# on exit: setting desired pressures to
-# minimum (as specified by config)
 def set_pressures_to_minimum(robot, config):
+    """Setting desired pressures to minimum as specified in the
+    corresponding configuration file.
+
+    Args:
+        robot: robot instance
+        config: configuration instance
+    """
+
     def _ended(agos, antagos, min_pressure_agos, min_pressure_antagos):
         if not all([a <= ma for a, ma in zip(agos, min_pressure_agos)]):
             return False
@@ -124,9 +145,13 @@ def set_pressures_to_minimum(robot, config):
         set_pressures_to_minimum(robot, config)
 
 
-# run the control loop
 def run(real, segment_id):
+    """Runs the control loop.
 
+    Args:
+        real (bool): true for real robot, false for dummy robot
+        segment_id (string): segment ID specifier
+    """
     # default config
     configuration = pam_interface.DefaultConfiguration()
 
@@ -149,7 +174,6 @@ def run(real, segment_id):
     previous_id = None
     try:
         while True:
-
             # reading command from the shared memory
             command = pam_interface.read_command(segment_id)
 
@@ -176,7 +200,6 @@ def run(real, segment_id):
 
 
 if __name__ == "__main__":
-
     args = sys.argv[1:]
     if "real" in args:
         real = True

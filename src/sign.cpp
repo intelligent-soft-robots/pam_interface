@@ -4,7 +4,11 @@ namespace pam_interface
 {
 Sign switch_sign(const Sign& sign)
 {
-    if (sign == Sign::AGONIST) return Sign::ANTAGONIST;
+    if (sign == Sign::AGONIST)
+    {
+        return Sign::ANTAGONIST;
+    }
+
     return Sign::AGONIST;
 }
 

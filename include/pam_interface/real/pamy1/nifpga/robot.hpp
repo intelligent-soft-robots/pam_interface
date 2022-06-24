@@ -20,12 +20,17 @@ NiFpga_interfaceNewRobotallMuscles.h in a more convenient way
 
 namespace pam_interface
 {
-// code common to all robots ------------------------------------------
+// This code is shared among all robots.
 
-// a joint has 2 muscles, one for which increase of pressure means
-// moving positively (index 0) and one for which increase of pressure
-// means moving negatively (index 1)
-// This class just stores the memory addresses on the FPGA
+/**
+ * @brief Joint class using a FPGA designed by National Instruments Corp.
+ *
+ * Each joint of Pamy1 is actuated by two pneumatic muscles with one muscle
+ * moving the joint in positive direction (index 0) and one in negative rotary
+ * direction (index 1) with increasing pressure.
+ *
+ * The joint class stores the corresponding memory addresses of the FPGA.
+ */
 class NiFpga_joint
 {
 public:
@@ -43,14 +48,35 @@ public:
     bool encoder_negative;
 };
 
-// a robot is a collection of joints, one per dofs
-// + some memory addresses relevant to the whole robot
+/**
+ * @brief Robot class using a FPGA designed by National Instruments Corp.
+ *
+ * A robot is a collection of joints with each joint defining
+ * degrees of freedom. For controlling the robot, a number of
+ * memory addresses of the FPGA API has to be engaged to control
+ * the corresponding robot.
+ */
 class NiFpgaRobot
 {
 public:
+    /**
+     * Constructs a new NiFPGA Robot object.
+     */
     NiFpgaRobot();
+
+    /**
+     * Destructs a NiFPGA Robot object.
+     */
     ~NiFpgaRobot();
+
+    /**
+     * Sets the number of degrees of freedom.
+     *
+     * @param nb_dofs number of degrees of freedom
+     */
     void set_nb_dofs(int nb_dofs);
+
+public:
     NiFpga_joint *joints;
     uint32_t control_period;
     uint32_t sensor_period;

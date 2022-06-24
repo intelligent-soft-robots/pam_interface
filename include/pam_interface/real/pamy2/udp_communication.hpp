@@ -24,7 +24,6 @@
 #define MIN_PRESSURE_BARS 0.2
 #define MAX_PRESSURE_BARS 4.0
 
-
 extern "C"
 {
 #include "pam_interface/real/pamy2/udp_c.h"
@@ -32,9 +31,25 @@ extern "C"
 
 namespace pam_interface
 {
+/**
+ * @brief UDPCommunication class.
+ *
+ * Manages the fetching of sensor information and sending of control
+ * instructions via UPD networking.
+ */
 class UDPCommunication
 {
 public:
+    /**
+     * UDPCommunication constructor with specified system configuration
+     * (e.g. including minimum and maximum available pressure), the target
+     * IP address and port.
+     *
+     * @param configuration Configuration object fitting to corresponding
+     * target system.
+     * @param ip Corresponding target IP address for socket configuration.
+     * @param port Corresponding target port for socket configuration.
+     */
     UDPCommunication(Configuration<NB_DOFS>& configuration,
                      std::string ip,
                      uint port);
@@ -55,7 +70,7 @@ public:
     void update_pressure(unsigned short dof, Sign sign, float desired_pressure);
 
     /**
-     * Receives udp telegram from the socket and
+     * Receives UDP telegram from the socket and
      * cast the information to an instance of RobotState
      */
     RobotState<NB_DOFS> receive();
@@ -67,17 +82,17 @@ public:
     const FromRobotMessage& get_received_message() const;
 
     /**
-     * The control pc receives from the robot udp
-     * telegrams that provide the current pressures of the muscles
-     * in bars (ranging from 0.2 to 4.0 bars). Because of historical
-     * reason (use of pamy1), we need to convert to integral
-     * pressures ranging from the min pressure and the max pressure
-     * (as provided by the configuration parameter of the constructor)
+     * The control PC receives from the robot UPD telegrams that provide
+     * the current pressures of the muscles in bar (ranging from 0.2 to
+     * 4.0 bar). Because of historical reason (use of pamy1), we need
+     * to convert to integral pressures ranging from the min pressure
+     * and the max pressure (as provided by the configuration parameter
+     * of the constructor)
      */
     int bar_to_int(float value) const;
 
     /**
-     * Counterpart of convert_pressure(float)
+     * Counterpart of convert_pressure (float)
      */
     float int_to_bar(int value) const;
 
