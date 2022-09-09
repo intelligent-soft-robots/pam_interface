@@ -75,10 +75,10 @@ def run(segment_id):
     """
 
     # default config
-    configuration = pam_interface.DefaultConfiguration()
+    configuration = pam_interface.Pamy1DefaultConfiguration(False)
 
     # interface to the robot
-    robot = pam_interface.RealRobot(configuration)
+    robot = pam_interface.Pamy1Robot(configuration)
 
     # clearing the shared memory
     pam_interface.init(segment_id)

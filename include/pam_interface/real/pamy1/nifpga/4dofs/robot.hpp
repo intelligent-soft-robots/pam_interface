@@ -14,9 +14,9 @@ const std::string NI_RESOURCE("RIO0");
 // PLUS: agonist muscles
 // MINUS: antagonist muscles
 
-const int PLUS_INDEXES[4] = {0, 2, 4, 7};
+const int PLUS_INDEXES[4] = {0, 2, 5, 7};
 
-const int MINUS_INDEXES[4] = {1, 3, 5, 6};
+const int MINUS_INDEXES[4] = {1, 3, 4, 6};
 
 // standing pressure:
 
@@ -30,7 +30,7 @@ const double ENCODER_BIAS[4] = {-0.174, 0.0957, 0.0833, -0.0201};
 
 const bool ENCODER_INVERSE[4] = {false, false, false, false};
 
-const bool ENCODER_NEGATIVE[4] = {true, false, false, true};
+const bool ENCODER_NEGATIVE[4] = {true, true, true, true};
 
 const std::string SIGNATURE = NiFpga_interfaceNewRobotallMuscles_Signature;
 const uint32_t ATTRIBUTE = NiFpga_OpenAttribute_NoRun;
