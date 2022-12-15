@@ -14,7 +14,7 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>pybind11_vendor</depend>
+  <depend>pybind11</depend>
   <depend>json_helper</depend>
   <depend>pam_configuration</depend>
   <depend>shared_memory</depend>
