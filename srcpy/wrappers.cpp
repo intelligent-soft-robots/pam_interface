@@ -60,6 +60,7 @@ PYBIND11_MODULE(pam_interface, m)
 
     pybind11::class_<RobotState>(m, "RobotState")
         .def(pybind11::init<>())
+        .def("set_joint", &RobotState::set_joint)
         .def("get_id", &RobotState::get_id)
         .def("get_desired", &RobotState::get_desired)
         .def("get", &RobotState::get)
