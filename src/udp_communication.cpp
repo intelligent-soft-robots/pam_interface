@@ -123,11 +123,6 @@ void UDPCommunication::update_pressure(unsigned short dof,
                                        Sign sign,
                                        float desired_pressure)
 {
-    if (dof == 3)
-    {
-        // because muscles are inverted for dof 3
-        sign = switch_sign(sign);
-    }
     // just update the to_robot_ structure, does not send
     // any telegram
     if (sign == Sign::AGONIST)
@@ -171,7 +166,7 @@ RobotState<NB_DOFS> UDPCommunication::receive()
     constexpr double PI = 3.141592653589793238463;
     constexpr double TO_RADIAN = +PI / 180.;
 
-    std::array<double, 4> signs{{1, +1, +1, -1}};
+    std::array<double, 4> signs{{+1, +1, +1, +1}};
     std::array<double, 4> rotations{
         {0 * TO_RADIAN, 0 * TO_RADIAN, 0 * TO_RADIAN, 0 * TO_RADIAN}};
 
