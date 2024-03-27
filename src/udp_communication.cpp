@@ -190,8 +190,7 @@ RobotState<NB_DOFS> UDPCommunication::receive()
             bar_to_int(from_robot_.data.joints_set[dof].antagonist.pressure);
         if (dof == 3)
         {
-            // for 3rd dof, the muscles are inverted
-            std::swap(observed_pressure_ago, observed_pressure_antago);
+            // for 3rd dof, the desired pressures are inverted
             std::swap(desired_pressure_ago, desired_pressure_antago);
         }
         state.set_joint(
